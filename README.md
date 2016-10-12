@@ -58,6 +58,8 @@ kontena_node_count = "3"
 # remove these after you are not constantly destroying the environment
 aws_instance_mongosingle_disable_api_termination = "false"
 aws_instance_node_disable_api_termination = "false"
+
+# the recipe will append variables under this line (the last one wins)
 ```
 
 ## running
