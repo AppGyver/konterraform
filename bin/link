@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+source helpers/common.sh
+
+mkdir -p $2
+
+set +e
+files=$(ls $1/*.tf)
+set -e
+
+for file_with_path in $files; do
+  file=$(basename $file_with_path)
+
+  if [ -L "$2/$file" ]; then
+    echo "$2/$file exists"
+  else
+    set +e
+    ln -s ../../../$file_with_path $2/$file && echo "linked $file_with_path"
+    set -e
+  fi
+done

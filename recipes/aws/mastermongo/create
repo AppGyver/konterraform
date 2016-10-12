@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -e
+source recipes/common/params.sh
+
+helpers/apply_stage aws common mastermongo
+helpers/apply_stage aws instances/mastermongo mastermongo
+
+MASTER_HOSTNAME=$(bin/output aws mastermongo kontena_alb_master_dns_name)
+MASTER_URL="http://$MASTER_HOSTNAME"
+
+source recipes/common/create_grid.sh
+
+helpers/apply_stage aws instances/node $RECIPE_NAME
+helpers/apply_stage aws alb/nodes/http $RECIPE_NAME
+
+NODE_COUNT=$(bin/output aws $RECIPE_NAME kontena_node_count)
+
+helpers/watch_grid_joining $GRID_NAME $NODE_COUNT

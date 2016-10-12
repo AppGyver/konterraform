@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+GRID_NAME=$1
+echo $(kontena grid show $GRID_NAME | grep token: | sed -e 's/  token: //')

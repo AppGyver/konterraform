@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -e
+source helpers/common.sh
+
+mkdir -p blueprints/$1/$3
+
+LINK_DIRS=$(cat stages/$1/$2)
+
+for LINK_DIR in $LINK_DIRS; do
+  bin/link $LINK_DIR blueprints/aws/$3
+done
+
+echo
+echo "-- STAGE PLAN: $2 --"
+bin/plan $1 $3
+
+echo
+echo "-- STAGE WILL APPLY: $2 --"
+hitEnter
+
+echo
+echo "-- STAGE APPLY: $2 --"
+bin/apply $1 $3
+echo
+echo "-- STAGE APPLIED: $2 --"

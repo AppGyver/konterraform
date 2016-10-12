@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -e
+source recipes/common/params.sh
+
+helpers/apply_stage aws common singlemongo
+helpers/apply_stage aws instances/mongosingle singlemongo
+
+MONGO_HOSTNAME=$(bin/output aws singlemongo kontena_mongo_private_dns)
+echo "kontena_master_mongodb_host = \"$MONGO_HOSTNAME\"" >> vars/aws-singlemongo.tfvars
+
+helpers/apply_stage aws instances/master singlemongo
+
+MASTER_HOSTNAME=$(bin/output aws singlemongo kontena_instances_master_public_dns)
+MASTER_URL="http://$MASTER_HOSTNAME"
+
+source recipes/common/create_grid.sh
+
+helpers/apply_stage aws instances/node $RECIPE_NAME
+helpers/apply_stage aws alb/nodes/http $RECIPE_NAME
+
+NODE_COUNT=$(bin/output aws $RECIPE_NAME kontena_node_count)
+
+helpers/watch_grid_joining $GRID_NAME $NODE_COUNT

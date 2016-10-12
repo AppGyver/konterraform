@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+source helpers/common.sh
+source bin/common/var_includer.sh
+
+terraform destroy -state=state/$1-$2.tfstate $INCLUDE_VAR_FILE blueprints/$1/$2

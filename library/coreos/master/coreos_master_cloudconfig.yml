@@ -1,0 +1,98 @@
+#cloud-config
+write_files:
+  - path: /etc/systemd/system/docker.service.d/50-kontena.conf
+    content: |
+      [Service]
+      Environment='DOCKER_CGROUPS=--exec-opt native.cgroupdriver=cgroupfs'
+
+  - path: /etc/kontena-server.env
+    permissions: 0600
+    owner: root
+    content: |
+      KONTENA_VERSION=${version}
+      KONTENA_VAULT_IV=${vault_iv}
+      KONTENA_VAULT_KEY=${vault_key}
+      KONTENA_WEB_CONCURRENCY=${web_concurrency}
+      KONTENA_MAX_THREADS=${max_threads}
+      MONGODB_URI=${mongodb_uri}
+      SSL_CERT="/etc/kontena-server.pem"
+
+  - path: /opt/bin/kontena-haproxy.sh
+    permissions: 0755
+    owner: root
+    content: |
+      #!/bin/sh
+      if [ -n "$SSL_CERT" ]; then
+        SSL_CERT=$(awk 1 ORS='\\n' $SSL_CERT)
+      else
+        SSL_CERT="**None**"
+      fi
+      /usr/bin/docker run --name=kontena-server-haproxy \
+        --link kontena-server-api:kontena-server-api \
+        -e SSL_CERT="$SSL_CERT" -e BACKEND_PORT=9292 \
+        -p 80:80 -p 443:443 kontena/haproxy:latest
+
+coreos:
+  locksmith:
+    window-start: ${coreos_locksmith_window_start}
+    window-length: ${coreos_locksmith_window_length}
+
+  update:
+    reboot-strategy: ${coreos_update_reboot_strategy}
+
+  units:
+    - name: kontena-server-api.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=kontena-server-api
+        Before=kontena-server-haproxy.service
+        Wants=kontena-server-haproxy.service
+        After=network-online.target
+        After=docker.service
+        Description=Kontena Server
+        Documentation=http://www.kontena.io/
+        Requires=network-online.target
+        Requires=docker.service
+
+        [Service]
+        Restart=always
+        RestartSec=5
+        EnvironmentFile=/etc/kontena-server.env
+        EnvironmentFile=-/etc/kontena-server.custom.env
+        ExecStartPre=-/usr/bin/docker stop kontena-server-api
+        ExecStartPre=-/usr/bin/docker rm kontena-server-api
+        ExecStartPre=/usr/bin/docker pull kontena/server:$${KONTENA_VERSION}
+        ExecStart=/usr/bin/docker run --name kontena-server-api \
+            -e MONGODB_URI=$${MONGODB_URI} \
+            -e WEB_CONCURRENCY=$${KONTENA_WEB_CONCURRENCY} \
+            -e MAX_THREADS=$${KONTENA_MAX_THREADS} \
+            -e VAULT_KEY=$${KONTENA_VAULT_KEY} -e VAULT_IV=$${KONTENA_VAULT_IV} \
+            kontena/server:$${KONTENA_VERSION}
+        ExecStop=/usr/bin/docker stop kontena-server-api
+
+    - name: kontena-server-haproxy.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=kontena-server-haproxy
+        After=network-online.target
+        After=docker.service
+        Description=Kontena Server HAProxy
+        Documentation=http://www.kontena.io/
+        Requires=network-online.target
+        Requires=docker.service
+        Requires=kontena-server-api.service
+
+        [Service]
+        Restart=always
+        RestartSec=5
+        EnvironmentFile=/etc/kontena-server.env
+        EnvironmentFile=-/etc/kontena-server.custom.env
+        ExecStartPre=-/usr/bin/docker stop kontena-server-haproxy
+        ExecStartPre=-/usr/bin/docker rm kontena-server-haproxy
+        ExecStartPre=/usr/bin/docker pull kontena/haproxy:latest
+        ExecStart=/opt/bin/kontena-haproxy.sh
+        ExecStop=/usr/bin/docker stop kontena-server-haproxy

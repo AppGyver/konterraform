@@ -1,0 +1,5 @@
+library/aws/keypair
+library/aws/instances
+library/aws/instances/node
+library/aws/security_groups/instances/nodes
+library/coreos/node

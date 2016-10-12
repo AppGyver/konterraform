@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+
+bin/destroy aws singlemongo
+rm -rf blueprints/aws/singlemongo

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+source helpers/common.sh
+
+terraform apply -input=true -state=state/$1-$2.tfstate tmp/plans/$1-$2.plan
