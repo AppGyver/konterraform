@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+source recipes/common/params.sh
+
+bin/destroy aws $RECIPE_NAME
+kontena grid rm --force $GRID_NAME
+rm -rf blueprints/aws/$RECIPE_NAME

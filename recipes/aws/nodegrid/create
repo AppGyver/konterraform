@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+MASTER_URL=$5
+
+source recipes/common/params.sh
+source recipes/common/create_grid_and_append_master_uri_and_token.sh
+
+helpers/apply_stage aws common $RECIPE_NAME
+
+helpers/apply_stage aws instances/node $RECIPE_NAME
+helpers/apply_stage aws alb/nodes/http $RECIPE_NAME
+
+helpers/watch_grid_joining $GRID_NAME $GRID_INITIAL_SIZE
