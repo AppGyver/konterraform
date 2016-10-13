@@ -14,7 +14,7 @@ helpers/apply_stage aws alb/master/http $RECIPE_NAME
 MASTER_HOSTNAME=$(bin/output aws $RECIPE_NAME kontena_alb_master_dns_name)
 MASTER_URL="http://$MASTER_HOSTNAME"
 
-source recipes/common/create_grid.sh
+source recipes/common/create_grid_and_append_master_uri_and_token.sh
 
 helpers/apply_stage aws instances/node $RECIPE_NAME
 helpers/apply_stage aws alb/nodes/http $RECIPE_NAME
