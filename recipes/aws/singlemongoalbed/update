@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-bin/plan aws singlemongoalbed
-read
-bin/apply aws singlemongoalbed

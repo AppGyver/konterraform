@@ -68,7 +68,7 @@ aws_instance_node_disable_api_termination = "false"
 recipes/aws/singlemongoalbed/create GRIDNAME 3 admin@example.com registered_admin_password
 ```
 
-Change settings in `vars` and run `recipes/aws/singlemongoalbed/update`
+Change settings in `vars` and run `bin/update aws singlemongoalbed`
 
 Destroy with `recipes/aws/singlemongoalbed/destroy`
 

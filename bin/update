@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+source helpers/common.sh
+
+bin/plan $1 $2
+hitEnter
+bin/apply $1 $2
