@@ -2,4 +2,3 @@ library/aws/keypair
 library/aws/instances
 library/aws/instances/mongosingle
 library/aws/security_groups/instances/mongos
-library/coreos/mongosingle

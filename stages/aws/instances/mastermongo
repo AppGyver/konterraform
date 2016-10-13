@@ -2,4 +2,3 @@ library/aws/keypair
 library/aws/instances
 library/aws/instances/mastermongo
 library/aws/security_groups/instances/masters
-library/coreos/mastermongo
