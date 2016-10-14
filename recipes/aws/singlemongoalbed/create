@@ -22,3 +22,5 @@ helpers/apply_stage aws alb/nodes/http $RECIPE_NAME
 NODE_COUNT=$(bin/output aws $RECIPE_NAME kontena_node_count)
 
 helpers/watch_grid_joining $GRID_NAME $NODE_COUNT
+
+helpers/apply_stage aws workarounds/bug_1136 $RECIPE_NAME

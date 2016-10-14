@@ -11,3 +11,5 @@ helpers/apply_stage aws instances/node $RECIPE_NAME
 helpers/apply_stage aws alb/nodes/http $RECIPE_NAME
 
 helpers/watch_grid_joining $GRID_NAME $GRID_INITIAL_SIZE
+
+helpers/apply_stage aws workarounds/bug_1136 $RECIPE_NAME
