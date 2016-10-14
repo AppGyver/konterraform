@@ -79,11 +79,12 @@ Destroy with `recipes/aws/singlemongoalbed/destroy`
 
 - Sometimes when `destroying...` for a long time you can speed it up by going to AWS console and destroying the resource from there.
 - Sometimes when `destroying...` it can be that an extra resource is running and preventing the deletion (go to AWS console and delete that)
-- set `KONTERRAFORM_FRONTEND=noninteractive` for fully automated setup
+- Set `KONTERRAFORM_FRONTEND=noninteractive` for fully automated setup
+- Taint (force recreate) with `bin/taint aws singlemongoalbed null_resource.kontena_provisioner_node_first.0`
 
 ## TODO
+
 - [ ] AWS DNS enabled check in core os template
-- [ ] Create EBS separately for mongosingle
 - [ ] test master and node reboot schedules
 - [ ] create .tfvars example in recipe that is intialized
 - [ ] Use autoscaling groups?
@@ -91,6 +92,7 @@ Destroy with `recipes/aws/singlemongoalbed/destroy`
 
 ## terraform pls
 
+* config: provisioner splat vars can only reference other resources - https://github.com/hashicorp/terraform/pull/1016
 * Intermediate variables (OR: add interpolation support to input variables) - https://github.com/hashicorp/terraform/issues/4084
 * Unable to use output variable as list - https://github.com/hashicorp/terraform/issues/8048
 * Autoload `*.tfvars` in the same way as `*.tf` (allow inheritance) - https://github.com/hashicorp/terraform/issues/1084

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+source helpers/common.sh
+
+terraform taint -state=state/$1-$2.tfstate $3
