@@ -12,6 +12,8 @@ resource "aws_instance" "kontena_mastermongo" {
 
   key_name = "${aws_key_pair.kontena.key_name}"
 
+  ebs_optimized = "${var.aws_instance_mastermongo_ebs_optimized}"
+
   root_block_device {
     volume_type = "${var.aws_instance_mastermongo_root_block_device_volume_type}"
     volume_size = "${var.aws_instance_mastermongo_root_block_device_volume_size}"
