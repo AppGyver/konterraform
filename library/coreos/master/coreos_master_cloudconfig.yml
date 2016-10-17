@@ -4,7 +4,7 @@ write_files:
     content: |
       [Service]
       Environment='DOCKER_CGROUPS=--exec-opt native.cgroupdriver=cgroupfs'
-
+${write_files_ssl_cert}
   - path: /etc/kontena-server.env
     permissions: 0600
     owner: root

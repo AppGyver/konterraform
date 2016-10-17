@@ -5,7 +5,7 @@ MASTER_URL=$1
 echo "Waiting until master is reachable at $MASTER_URL "
 while true; do
   set +e
-  STATUS_CODE=$(curl --connect-timeout 2 -s -o /dev/null -w "%{http_code}" $MASTER_URL)
+  STATUS_CODE=$(curl -k --connect-timeout 2 -s -o /dev/null -w "%{http_code}" $MASTER_URL)
 
   [ "$STATUS_CODE" == 200 ] && break
   set -e
@@ -20,7 +20,7 @@ ALB says 200, but is probably not ok yet. Waiting for it to return some Kontena 
 
 while true; do
   set +e
-  CONTENTS=$(curl --connect-timeout 2 -s $MASTER_URL)
+  CONTENTS=$(curl -k --connect-timeout 2 -s $MASTER_URL)
   [[ $CONTENTS =~ "Kontena Master" ]] && break
   set -e
 

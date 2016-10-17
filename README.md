@@ -65,6 +65,20 @@ aws_instance_node_root_block_device_delete_on_termination = "true"
 # the recipe will append variables under this line (the last one wins)
 ```
 
+### Master SSL
+
+Use ALB with HTTPS or:
+
+```
+kontena_master_coreos_write_files_ssl_cert = "
+  - path: /etc/kontena-server.pem
+    permissions: 0600
+    owner: root
+    content: |
+      -----BEGIN CERTIFICATE-----
+      ...
+```
+
 ## running
 
 ```

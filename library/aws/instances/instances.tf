@@ -59,6 +59,7 @@ variable "kontena_master_vault_key" {
 }
 variable "kontena_master_max_threads" { default = "8" }
 variable "kontena_master_web_concurrency" { default = "2" }
+variable "kontena_master_coreos_write_files_ssl_cert" { default = "" }
 
 # KONTENA-AGENT
 variable "kontena_agent_version" { default = "latest" }
