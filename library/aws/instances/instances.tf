@@ -13,7 +13,7 @@ variable "kontena_mongosingle_count" { default = 0 }
 variable "aws_instance_master_type" { default = "m3.medium" }
 variable "aws_instance_master_virtualization_type" { default = "HVM" }
 variable "aws_instance_master_root_block_device_volume_type" { default = "gp2" }
-variable "aws_instance_master_root_block_device_volume_size" { default = 100 }
+variable "aws_instance_master_root_block_device_volume_size" { default = 32 }
 variable "aws_instance_master_root_block_device_delete_on_termination" { default = true }
 variable "aws_instance_master_disable_api_termination" { default = false }
 variable "aws_instance_master_ebs_optimized" { default = false }
@@ -21,7 +21,7 @@ variable "aws_instance_master_ebs_optimized" { default = false }
 variable "aws_instance_mastermongo_type" { default = "m3.medium" }
 variable "aws_instance_mastermongo_virtualization_type" { default = "HVM" }
 variable "aws_instance_mastermongo_root_block_device_volume_type" { default = "gp2" }
-variable "aws_instance_mastermongo_root_block_device_volume_size" { default = 100 }
+variable "aws_instance_mastermongo_root_block_device_volume_size" { default = 256 }
 variable "aws_instance_mastermongo_root_block_device_delete_on_termination" { default = false }
 variable "aws_instance_mastermongo_disable_api_termination" { default = true }
 variable "aws_instance_mastermongo_ebs_optimized" { default = false }
@@ -57,7 +57,7 @@ variable "kontena_master_vault_iv" {
 variable "kontena_master_vault_key" {
   default = "konterraformdefaultmastervaultkeykonterraformdefaultmastervaultkeykonterraformdefaultmastervault"
 }
-variable "kontena_master_max_threads" { default = "8" }
+variable "kontena_master_max_threads" { default = "16" }
 variable "kontena_master_web_concurrency" { default = "2" }
 variable "kontena_master_coreos_write_files_ssl_cert" { default = "" }
 

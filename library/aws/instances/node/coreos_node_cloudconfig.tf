@@ -3,6 +3,7 @@ variable "coreos_node_locksmith_window_length" { default = "1h" }
 variable "coreos_node_update_reboot_strategy" { default = "reboot" }
 
 variable "coreos_node_hostname_midfix" { default = "node" }
+variable "coreos_node_dns_server" { default = "10.0.0.2" }
 
 data "template_file" "coreos_cloudconfig_node" {
   count = "${var.kontena_node_count}"
@@ -11,8 +12,7 @@ data "template_file" "coreos_cloudconfig_node" {
 
   vars {
     hostname = "${var.name}-${var.coreos_node_hostname_midfix}-${count.index}"
-    // TODO: check if aws has dns enabled?
-    dns_server = "10.0.0.2"
+    dns_server = "${var.coreos_node_dns_server}"
 
     docker_label_region = "${var.name}-${var.aws_region}"
     docker_label_az = "${element(data.aws_availability_zones.available.names, (count.index % var.kontena_node_count))}"
