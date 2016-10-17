@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 set -e
-source recipes/common/params.sh
+GRID_NAME=$1
+RECIPE_NAME=nodegrid
+
+[ ! "$GRID_NAME" ] && echo "params: GRID_NAME" && exit 1
+
+nodes=$(kontena node ls | tail -n +2 | cut -f 1 -d " ")
+for node in $nodes; do
+  kontena node rm --force $node
+  echo "removed node $node"
+done
+
+kontena grid rm --force $GRID_NAME
 
 bin/destroy aws $RECIPE_NAME
-kontena grid rm --force $GRID_NAME
-rm -rf blueprints/aws/$RECIPE_NAME
