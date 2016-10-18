@@ -21,8 +21,6 @@ Additionally:
 * `helpers/` has scripts that tie together various pieces in ..
 * .. `bin/` where sensible defaults are set for Terraform commands
 
-Note: Weave network `10.81.0.0/16` can not be changed, so don't use that for your VPC.
-
 Features:
 
 * Has sensible defaults
@@ -63,6 +61,16 @@ aws_instance_node_disable_api_termination = "false"
 aws_instance_node_root_block_device_delete_on_termination = "true"
 
 # the recipe will append variables under this line (the last one wins)
+```
+
+### Using different CIDR block
+
+Note: Weave network `10.81.0.0/16` can not be changed, so don't use that for your VPC.
+
+```
+aws_vpc_cidr_block = "10.32.0.0/16"
+aws_public_subnet_cidr_blocks = ["10.32.1.0/24", "10.32.2.0/24", "10.32.3.0/24"]
+coreos_node_dns_server = "10.32.0.2"
 ```
 
 ### Master SSL
