@@ -8,7 +8,7 @@ if [ ! $GRID_NAME ] || [ ! $GRID_INITIAL_SIZE ] || [ ! $ADMIN_USERNAME ] || [ ! 
   exit 1
 fi
 
-RECIPE_NAME=$(basename $(dirname $0))
+source recipes/common/recipe_name.sh
 
 echo '
      |  /   \   \   |_  __| __|  \   |     \

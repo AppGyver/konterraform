@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -e
 GRID_NAME=$1
-RECIPE_NAME=nodegrid
+
+source recipes/common/recipe_name.sh
 
 [ ! "$GRID_NAME" ] && echo "params: GRID_NAME" && exit 1
 
