@@ -2,10 +2,10 @@
 set -e
 source recipes/common/params.sh
 
-helpers/apply_stage aws common mastermongo
-helpers/apply_stage aws instances/mastermongo mastermongo
+helpers/apply_stage aws common $RECIPE_NAME
+helpers/apply_stage aws instances/$RECIPE_NAME $RECIPE_NAME
 
-MASTER_HOSTNAME=$(bin/output aws mastermongo kontena_alb_master_dns_name)
+MASTER_HOSTNAME=$(bin/output aws $RECIPE_NAME kontena_alb_master_dns_name)
 MASTER_URL="http://$MASTER_HOSTNAME"
 
 source recipes/common/create_grid.sh
