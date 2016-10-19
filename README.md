@@ -106,6 +106,10 @@ Destroy with `recipes/aws/singlemongoalbed/destroy`
 
 ## TODO
 
+- [ ] example/fix to get SSL full certificate chain upload working
+- [ ] Node delete prevention?
+- [ ] SSL example
+- [ ] great defaults
 - [ ] AWS DNS enabled check in core os template
 - [ ] test master and node reboot schedules
 - [ ] create .tfvars example in recipe that is intialized
