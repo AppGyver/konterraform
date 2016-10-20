@@ -1,19 +1,11 @@
 #!/usr/bin/env bash
 set -e
-source recipes/common/params.sh
+source recipes/common/recipe_name.sh
 
 helpers/apply_stage aws common $RECIPE_NAME
-helpers/apply_stage aws instances/$RECIPE_NAME $RECIPE_NAME
+helpers/apply_stage aws instances/mastermongo $RECIPE_NAME
 
 MASTER_HOSTNAME=$(bin/output aws $RECIPE_NAME kontena_master_public_dns)
 MASTER_URL="http://$MASTER_HOSTNAME"
 
-source recipes/common/create_grid_and_append_master_uri_and_token.sh
-
-helpers/apply_stage aws instances/node $RECIPE_NAME
-helpers/apply_stage aws elb/nodes/tcp $RECIPE_NAME
-
-NODE_COUNT=$(bin/output aws $RECIPE_NAME kontena_node_count)
-helpers/watch_grid_joining $GRID_NAME $NODE_COUNT
-
-helpers/apply_stage aws workarounds/bug_1136 $RECIPE_NAME
+helpers/master_wait $MASTER_URL
