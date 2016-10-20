@@ -12,7 +12,7 @@ data "template_file" "coreos_cloudconfig_mastermongo" {
     coreos_locksmith_window_length = "${var.coreos_mastermongo_locksmith_window_length}"
     coreos_update_reboot_strategy = "${var.coreos_mastermongo_update_reboot_strategy}"
 
-    mongodb_uri = "mongodb://localhost:27017/${var.name}_master"
+    mongodb_uri = "mongodb://kontena-server-mongo:27017/${var.name}_master"
     version = "${var.kontena_master_version}"
     vault_iv = "${var.kontena_master_vault_iv}"
     vault_key = "${var.kontena_master_vault_key}"
