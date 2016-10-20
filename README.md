@@ -104,7 +104,7 @@ Destroy with `bin/destroy aws singlemongoalbed`
 Create a symlink from `mastermongo` recipe (a single VM with master and mongo) to your own name (so that you can have multiple mastermongos running in the future if needed)
 
 ```
-$ ln -s mymaster recipes/aws/mastermongo
+$ ln -s mastermongo recipes/aws/mymastermongo
 $ cat > vars/aws-mymaster.tfvars
 $ recipes/aws/mymaster/create
 ```
@@ -112,7 +112,7 @@ $ recipes/aws/mymaster/create
 Then do the same for `nodegrid` AND override the default CIDR block (because each recipe creates it's own VPC, see below)
 
 ```
-$ ln -s mynodes recipes/aws/nodegrid
+$ ln -s nodegrid recipes/aws/mynodegrid
 $ cat > vars/mynodes.tfvars
 $ recipes/aws/mynodes/create yourgridname 3 yourkontena@email.com yourpassword http://<mymasterurl>
 ```
