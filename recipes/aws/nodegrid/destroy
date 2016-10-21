@@ -6,12 +6,8 @@ source recipes/common/recipe_name.sh
 
 [ ! "$GRID_NAME" ] && echo "params: GRID_NAME" && exit 1
 
-nodes=$(kontena node ls | tail -n +2 | cut -f 1 -d " ")
-for node in $nodes; do
-  kontena node rm --force $node
-  echo "removed node $node"
-done
-
-kontena grid rm --force $GRID_NAME
+source recipes/common/kontena/service_rm_all.sh
+source recipes/common/kontena/node_rm_all.sh
+source recipes/common/kontena/grid_rm.sh
 
 bin/destroy aws $RECIPE_NAME
