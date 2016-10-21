@@ -44,6 +44,17 @@ coreos:
         [DHCP]
         UseDNS=false
 
+    - name: etcd2.service
+      command: start
+      enable: true
+      content: |
+        Description=etcd 2.0
+        After=docker.service
+        [Service]
+        Restart=always
+        RestartSec=5
+        ExecStart=/usr/bin/docker logs --tail=10 -f kontena-etcd
+
     - name: 10-weave.network
       runtime: false
       content: |
