@@ -1,5 +1,5 @@
 resource "aws_instance" "kontena_mongosingle" {
-  count = "${var.kontena_mongosingle_count}"
+  count = "${var.kontena_mongo_count}"
   disable_api_termination = "${var.aws_instance_mongosingle_disable_api_termination}"
 
   ami = "${lookup(var.aws_instance_ami_id_by_virtualization_type, var.aws_instance_mongosingle_virtualization_type)}"
@@ -28,7 +28,7 @@ resource "aws_instance" "kontena_mongosingle" {
 }
 
 output "kontena_mongo_count" {
-  value = "${var.kontena_mongosingle_count}"
+  value = "${var.kontena_mongo_count}"
 }
 
 output "kontena_mongo_public_dns" {

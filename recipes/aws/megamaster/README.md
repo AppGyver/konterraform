@@ -17,7 +17,7 @@ aws_alb_key_master = "certs/yourdomain.com.key"
 
 kontena_master_version = "latest"
 
-kontena_mongosingle_count = "1"
+kontena_mongo_count = "1"
 kontena_master_count = "1"
 
 # recipe will append here:

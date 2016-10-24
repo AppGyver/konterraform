@@ -3,7 +3,7 @@ variable "coreos_mongosingle_locksmith_window_length" { default = "1h" }
 variable "coreos_mongosingle_update_reboot_strategy" { default = "off" }
 
 data "template_file" "coreos_cloudconfig_mongosingle" {
-  count = "${var.kontena_mongosingle_count}"
+  count = "${var.kontena_mongo_count}"
 
   template = "${file("library/coreos/mongosingle/coreos_mongosingle_cloudconfig.yml")}"
 

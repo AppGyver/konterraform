@@ -52,7 +52,7 @@ ssh_public_key_file = "~/.ssh/id_rsa.pub"
 kontena_master_version = "latest"
 kontena_agent_version = "latest"
 
-kontena_mongosingle_count = "1"
+kontena_mongo_count = "1"
 kontena_master_count = "2"
 kontena_node_count = "3"
 
