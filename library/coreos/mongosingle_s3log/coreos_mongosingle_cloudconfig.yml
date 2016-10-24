@@ -1,0 +1,168 @@
+#cloud-config
+write_files:
+  - path: /etc/systemd/system/docker.service.d/50-kontena.conf
+    content: |
+      [Service]
+      Environment='DOCKER_CGROUPS=--exec-opt native.cgroupdriver=cgroupfs'
+
+  - path: /etc/kontena-log-archiver.env
+    permissions: 0600
+    owner: root
+    content: |
+      S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      S3_SECRET_KEY=${S3_SECRET_KEY}
+      S3_REGION=${S3_REGION}
+      S3_BUCKET=${S3_BUCKET}
+      MONGODB_URL=mongodb://mongodb/${name}_master
+
+  - path: /etc/kontena-log-archiver/plugins/bson_monkey.rb
+    permissions: 0644
+    owner: root
+    content: |
+      module BSON
+        class ObjectId
+
+          def to_msgpack(*a)
+            to_s.to_msgpack(*a)
+          end
+
+        end
+      end
+
+  - path: /etc/kontena-log-archiver/plugins/kontena_formatter.rb
+    permissions: 0644
+    owner: root
+    content: |
+      require 'fluent/formatter'
+
+      module Fluent
+        module TextFormatter
+          class KontenaFormatter < Formatter
+            Plugin.register_formatter("kontena_formatter", self)
+
+            include HandleTagAndTimeMixin # If you wish to use tag_key, time_key, etc.
+            # config_param :field, :string
+
+            # # This method does further processing. Configuration parameters can be
+            # # accessed either via "conf" hash or member variables.
+            def configure(conf)
+              super
+              @field = 'data'
+            end
+
+            # This is the method that formats the data output.
+            def format(tag, time, record)
+              data = record[@field]
+              $log.error "#{@field} field key is missing from record." unless data
+
+              "#{Time.at(time).iso8601} #{tag} #{data}\n"
+            end
+          end
+        end
+      end
+
+  - path: /etc/kontena-log-archiver/etc/fluent.conf
+    permissions: 0644
+    owner: root
+    content: |
+      <source>
+        type mongo_tail
+        url "#{ENV['MONGODB_URL']}"
+        collection container_logs
+        tag_key name
+        time_key created_at
+        id_store_collection container_logs_tail
+      </source>
+
+      <match **>
+        @type copy
+        <store>
+          @type s3
+
+          aws_key_id "#{ENV['S3_ACCESS_KEY']}"
+          aws_sec_key "#{ENV['S3_SECRET_KEY']}"
+          s3_bucket "#{ENV['S3_BUCKET']}"
+          s3_region "#{ENV['S3_REGION']}"
+          path master_logs_minutely
+
+          buffer_type memory
+          buffer_chunk_limit 256m
+          buffer_queue_limit 128
+
+          store_as gzip
+          format kontena_formatter
+          include_time_key true
+          include_tag_key true
+
+          s3_object_key_format %{path}/%{time_slice}_%{index}.log.%{file_extension}
+          time_slice_format %Y%m%d-%H
+          time_slice_wait 10m
+
+          flush_interval 60s
+
+          utc
+        </store>
+      </match>
+
+coreos:
+  locksmith:
+    window-start: ${coreos_locksmith_window_start}
+    window-length: ${coreos_locksmith_window_length}
+
+  update:
+    reboot-strategy: ${coreos_update_reboot_strategy}
+
+  units:
+    - name: kontena-server-mongo.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=kontena-server-mongo
+        After=network-online.target
+        After=docker.service
+        Description=Kontena Server MongoDB
+        Documentation=http://www.mongodb.org/
+        Requires=network-online.target
+        Requires=docker.service
+        [Service]
+        Restart=always
+        RestartSec=5
+        ExecStartPre=/usr/bin/docker pull mongo:${mongo_version}
+        ExecStartPre=-/usr/bin/docker create --name=kontena-server-mongo-data mongo:${mongo_version}
+        ExecStartPre=-/usr/bin/docker stop kontena-server-mongo
+        ExecStartPre=-/usr/bin/docker rm kontena-server-mongo
+        ExecStart=/usr/bin/docker run --name=kontena-server-mongo \
+            --volumes-from=kontena-server-mongo-data \
+            --publish "27017:27017" \
+            mongo:${mongo_version} mongod --smallfiles --bind_ip "${bind_ip}"
+        ExecStop=/usr/bin/docker stop kontena-server-mongo
+
+    - name: kontena-log-archiver.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=kontena-log-archiver
+        After=network-online.target
+        After=docker.service
+        Description=Kontena Log Archiver
+        Documentation=https://github.com/kontena/kontena-log-archiver
+        Requires=network-online.target
+        Requires=docker.service
+        Requires=kontena-server-mongo.service
+
+        [Service]
+        Restart=always
+        RestartSec=5
+        ExecStartPre=/usr/bin/docker pull kontena/log-archiver:latest
+        ExecStartPre=-/usr/bin/docker stop kontena-log-archiver
+        ExecStartPre=-/usr/bin/docker rm kontena-log-archiver
+        ExecStartPre=-/usr/bin/docker exec -it kontena-server-mongo mongo --eval 'db.createCollection("container_logs_tail", {capped: true, size: 5242880})' localhost/${name}_master
+        ExecStart=/usr/bin/docker run --name=kontena-log-archiver \
+            --link kontena-server-mongo:mongodb \
+            --env-file=/etc/kontena-log-archiver.env \
+            -v /etc/kontena-log-archiver/etc:/fluentd/etc \
+            -v /etc/kontena-log-archiver/plugins:/fluentd/plugins \
+            kontena/log-archiver:latest
+        ExecStop=/usr/bin/docker stop kontena-log-archiver

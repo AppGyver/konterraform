@@ -3,7 +3,7 @@ set -e
 source recipes/common/params.sh
 
 helpers/apply_stage $PROVIDER_NAME common $RECIPE_NAME
-helpers/apply_stage $PROVIDER_NAME instances/mongosingle $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME instances/mongosingle/nolog $RECIPE_NAME
 
 MONGO_HOSTNAME=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_mongo_private_dns)
 echo "kontena_master_mongodb_host = \"$MONGO_HOSTNAME\"" >> vars/$PROVIDER_NAME-$RECIPE_NAME.tfvars

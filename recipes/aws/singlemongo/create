@@ -2,15 +2,15 @@
 set -e
 source recipes/common/params.sh
 
-helpers/apply_stage $PROVIDER_NAME common singlemongo
-helpers/apply_stage $PROVIDER_NAME instances/mongosingle singlemongo
+helpers/apply_stage $PROVIDER_NAME common $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME instances/mongosingle/nolog $RECIPE_NAME
 
-MONGO_HOSTNAME=$(bin/output $PROVIDER_NAME singlemongo kontena_mongo_private_dns)
-echo "kontena_master_mongodb_host = \"$MONGO_HOSTNAME\"" >> vars/$PROVIDER_NAME-singlemongo.tfvars
+MONGO_HOSTNAME=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_mongo_private_dns)
+echo "kontena_master_mongodb_host = \"$MONGO_HOSTNAME\"" >> vars/$PROVIDER_NAME-$RECIPE_NAME.tfvars
 
-helpers/apply_stage $PROVIDER_NAME instances/master singlemongo
+helpers/apply_stage $PROVIDER_NAME instances/master $RECIPE_NAME
 
-MASTER_HOSTNAME=$(bin/output $PROVIDER_NAME singlemongo kontena_instances_master_public_dns)
+MASTER_HOSTNAME=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_instances_master_public_dns)
 MASTER_URL="http://$MASTER_HOSTNAME"
 
 source recipes/common/create_grid_and_append_master_uri_and_token.sh
