@@ -27,10 +27,6 @@ resource "aws_instance" "kontena_node" {
   user_data = "${element(data.template_file.coreos_cloudconfig_node.*.rendered, count.index)}"
 }
 
-output "kontena_node_count" {
-  value = "${var.kontena_node_count}"
-}
-
 output "kontena_node_public_dns" {
   value = ["${aws_instance.kontena_node.*.public_dns}"]
 }
