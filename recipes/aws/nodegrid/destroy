@@ -10,4 +10,4 @@ source recipes/common/kontena/service_rm_all.sh
 source recipes/common/kontena/node_rm_all.sh
 source recipes/common/kontena/grid_rm.sh
 
-bin/destroy aws $RECIPE_NAME
+bin/destroy $PROVIDER_NAME $RECIPE_NAME

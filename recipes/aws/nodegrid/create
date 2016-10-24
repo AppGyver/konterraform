@@ -5,10 +5,10 @@ MASTER_URL=$5
 source recipes/common/params.sh
 source recipes/common/create_grid_and_append_master_uri_and_token.sh
 
-helpers/apply_stage aws common $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME common $RECIPE_NAME
 
-helpers/apply_stage aws instances/node $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME instances/node $RECIPE_NAME
 
-helpers/apply_stage aws elb/nodes/tcp $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME elb/nodes/tcp $RECIPE_NAME
 helpers/watch_grid_joining $GRID_NAME $GRID_INITIAL_SIZE
-helpers/apply_stage aws workarounds/bug_1136 $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME workarounds/bug_1136 $RECIPE_NAME

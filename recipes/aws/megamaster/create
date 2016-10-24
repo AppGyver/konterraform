@@ -3,20 +3,20 @@ set -e
 
 RECIPE_NAME=megamaster
 
-helpers/apply_stage aws common $RECIPE_NAME
-helpers/apply_stage aws instances/mongosingle $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME common $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME instances/mongosingle $RECIPE_NAME
 
-MONGO_HOSTNAME=$(bin/output aws $RECIPE_NAME kontena_mongo_private_dns)
-echo "kontena_master_mongodb_host = \"$MONGO_HOSTNAME\"" >> vars/aws-$RECIPE_NAME.tfvars
+MONGO_HOSTNAME=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_mongo_private_dns)
+echo "kontena_master_mongodb_host = \"$MONGO_HOSTNAME\"" >> vars/$PROVIDER_NAME-$RECIPE_NAME.tfvars
 
-helpers/apply_stage aws instances/master $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME instances/master $RECIPE_NAME
 
-helpers/apply_stage aws alb/certificates/master $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME alb/certificates/master $RECIPE_NAME
 sleep 3 # aws is slow to register the cert... / terraform does not assert hard enough
 
-helpers/apply_stage aws alb/master/https $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME alb/master/https $RECIPE_NAME
 
-MASTER_HOSTNAME=$(bin/output aws $RECIPE_NAME kontena_alb_master_dns_name)
+MASTER_HOSTNAME=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_alb_master_dns_name)
 MASTER_URL="https://$MASTER_HOSTNAME"
 
 echo $MASTER_URL

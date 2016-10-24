@@ -8,6 +8,7 @@ if [ ! $GRID_NAME ] || [ ! $GRID_INITIAL_SIZE ] || [ ! $ADMIN_USERNAME ] || [ ! 
   exit 1
 fi
 
+source recipes/common/provider_name.sh
 source recipes/common/recipe_name.sh
 
 echo '
@@ -16,4 +17,5 @@ echo '
    __|__\ __/__|  __| __|  ___|_|  __|__| __|
 '
 
+echo "provider: $PROVIDER_NAME"
 echo "recipe: $RECIPE_NAME"

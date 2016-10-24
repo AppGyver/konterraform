@@ -2,10 +2,10 @@
 set -e
 source recipes/common/recipe_name.sh
 
-helpers/apply_stage aws common $RECIPE_NAME
-helpers/apply_stage aws instances/mastermongo $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME common $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME instances/mastermongo $RECIPE_NAME
 
-MASTER_HOSTNAME=$(bin/output aws $RECIPE_NAME kontena_master_public_dns)
+MASTER_HOSTNAME=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_master_public_dns)
 MASTER_URL="http://$MASTER_HOSTNAME"
 
 helpers/master_wait $MASTER_URL
