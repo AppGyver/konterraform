@@ -3,5 +3,7 @@ source helpers/common.sh
 source bin/common/var_includer.sh
 source bin/common/non_interactive.sh
 
+[[ -z "$1" || -z "$2" ]] && echo "usage: provider recipe" && exit 1
+
 terraform destroy -state=state/$1-$2.tfstate $INCLUDE_VAR_FILE $FORCE blueprints/$1/$2
 rm -rf blueprints/$1/$2
