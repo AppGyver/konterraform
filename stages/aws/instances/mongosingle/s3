@@ -1,0 +1,7 @@
+library/aws/s3/kontena_log_archiver
+library/aws/s3/kontena_mongo_backup
+library/coreos/mongosingle_s3
+library/aws/keypair
+library/aws/instances
+library/aws/instances/mongosingle
+library/aws/security_groups/instances/mongos
