@@ -8,7 +8,7 @@ resource "aws_iam_access_key" "kontena_log_archiver" {
 }
 
 resource "aws_iam_user_policy" "kontena_log_archiver" {
-    name = "test"
+    name = "${var.name}_s3_rw_kontena-logs"
     user = "${aws_iam_user.kontena_log_archiver.name}"
     policy = <<EOF
 {
