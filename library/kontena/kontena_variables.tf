@@ -26,3 +26,9 @@ variable "kontena_agent_peer_interface" { default = "eth0" }
 variable "kontena_agent_master_uri" { default = "http://notset.example.org"}
 variable "kontena_agent_token" { default = "notset" }
 variable "kontena_agent_memory_limit" { default = "256m" }
+
+# MONGO-BACKUP
+
+variable "kontena_mongo_backup_version" { default = "3.0" }
+variable "kontena_mongo_backup_interval" { default = "3h" }
+variable "kontena_mongo_backup_s3_path" { default = "kontena_master" }

@@ -1,6 +1,0 @@
-library/aws/s3/kontena_log_archiver
-library/coreos/mongosingle_s3log
-library/aws/keypair
-library/aws/instances
-library/aws/instances/mongosingle
-library/aws/security_groups/instances/mongos

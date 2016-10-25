@@ -9,11 +9,11 @@ write_files:
     permissions: 0600
     owner: root
     content: |
-      S3_ACCESS_KEY=${S3_ACCESS_KEY}
-      S3_SECRET_KEY=${S3_SECRET_KEY}
-      S3_REGION=${S3_REGION}
-      S3_BUCKET=${S3_BUCKET}
-      MONGODB_URL=mongodb://mongodb/${name}_master
+      S3_ACCESS_KEY=${LOG_ARCHIVER_S3_ACCESS_KEY}
+      S3_SECRET_KEY=${LOG_ARCHIVER_S3_SECRET_KEY}
+      S3_REGION=${LOG_ARCHIVER_S3_REGION}
+      S3_BUCKET=${LOG_ARCHIVER_S3_BUCKET}
+      MONGODB_URL=mongodb://mongo/${name}_master
 
   - path: /etc/kontena-log-archiver/plugins/bson_monkey.rb
     permissions: 0644
@@ -104,6 +104,18 @@ write_files:
         </store>
       </match>
 
+  - path: /etc/kontena-mongo-backup.env
+    permissions: 0600
+    owner: root
+    content: |
+      MONGODB_HOST=mongo
+      INTERVAL=${MONGO_BACKUP_INTERVAL}
+      S3_ACCESS_KEY_ID=${MONGO_BACKUP_S3_ACCESS_KEY}
+      S3_SECRET_ACCESS_KEY=${MONGO_BACKUP_S3_SECRET_KEY}
+      S3_REGION=${MONGO_BACKUP_S3_REGION}
+      S3_BUCKET=${MONGO_BACKUP_S3_BUCKET}
+      S3_PATH=${MONGO_BACKUP_S3_PATH}
+
 coreos:
   locksmith:
     window-start: ${coreos_locksmith_window_start}
@@ -125,6 +137,7 @@ coreos:
         Documentation=http://www.mongodb.org/
         Requires=network-online.target
         Requires=docker.service
+
         [Service]
         Restart=always
         RestartSec=5
@@ -144,12 +157,9 @@ coreos:
       content: |
         [Unit]
         Description=kontena-log-archiver
-        After=network-online.target
-        After=docker.service
+        After=kontena-server-mongo.service
         Description=Kontena Log Archiver
         Documentation=https://github.com/kontena/kontena-log-archiver
-        Requires=network-online.target
-        Requires=docker.service
         Requires=kontena-server-mongo.service
 
         [Service]
@@ -160,9 +170,31 @@ coreos:
         ExecStartPre=-/usr/bin/docker rm kontena-log-archiver
         ExecStartPre=-/usr/bin/docker exec -it kontena-server-mongo mongo --eval 'db.createCollection("container_logs_tail", {capped: true, size: 5242880})' localhost/${name}_master
         ExecStart=/usr/bin/docker run --name=kontena-log-archiver \
-            --link kontena-server-mongo:mongodb \
+            --link kontena-server-mongo:mongo \
             --env-file=/etc/kontena-log-archiver.env \
             -v /etc/kontena-log-archiver/etc:/fluentd/etc \
             -v /etc/kontena-log-archiver/plugins:/fluentd/plugins \
             kontena/log-archiver:latest
         ExecStop=/usr/bin/docker stop kontena-log-archiver
+
+    - name: kontena-mongo-backup.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=kontena-mongo-backup
+        After=kontena-server-mongo.service
+        Description=Kontena Server MongoDB
+        Documentation=http://www.mongodb.org/
+        Requires=kontena-server-mongo.service
+
+        [Service]
+        Restart=always
+        RestartSec=5
+        ExecStartPre=/usr/bin/docker pull kontena/mongo-backup:${mongo_backup_version}
+        ExecStartPre=-/usr/bin/docker stop kontena-mongo-backup
+        ExecStartPre=-/usr/bin/docker rm kontena-mongo-backup
+        ExecStart=/usr/bin/docker run --name=kontena-mongo-backup \
+            --link kontena-server-mongo:mongo \
+            --env-file=/etc/kontena-mongo-backup.env \
+          kontena/mongo-backup:${mongo_backup_version}

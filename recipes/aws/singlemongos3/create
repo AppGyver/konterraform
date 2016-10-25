@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+source recipes/common/params.sh
+
+helpers/apply_stage $PROVIDER_NAME common $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME instances/mongosingle/s3 $RECIPE_NAME
+
+MONGO_HOSTNAME=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_mongo_private_dns)
+echo "kontena_master_mongodb_host = \"$MONGO_HOSTNAME\"" >> vars/$PROVIDER_NAME-$RECIPE_NAME.tfvars
+
+helpers/apply_stage $PROVIDER_NAME instances/master $RECIPE_NAME
+
+MASTER_HOSTNAME=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_master_public_dns)
+MASTER_URL="http://$MASTER_HOSTNAME"
+
+source recipes/common/create_grid_and_append_master_uri_and_token.sh
+
+helpers/apply_stage $PROVIDER_NAME instances/node $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME alb/nodes/http $RECIPE_NAME
+
+NODE_COUNT=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_node_count)
+helpers/watch_grid_joining $GRID_NAME $NODE_COUNT
+
+helpers/apply_stage $PROVIDER_NAME workarounds/bug_1136 $RECIPE_NAME
