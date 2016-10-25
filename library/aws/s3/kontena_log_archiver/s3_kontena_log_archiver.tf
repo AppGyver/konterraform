@@ -38,15 +38,10 @@ resource "aws_s3_bucket" "kontena_log_archiver" {
         prefix = "master_logs_minutely/"
         enabled = true
 
-        abort_incomplete_multipart_upload_days = 7
+        abort_incomplete_multipart_upload_days = 3
 
         transition {
             days = 30
-            storage_class = "STANDARD_IA"
-        }
-
-        transition {
-            days = 90
             storage_class = "GLACIER"
         }
 
