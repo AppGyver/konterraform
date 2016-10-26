@@ -16,12 +16,12 @@ done
 
 echo "
 
-ALB says 200, but is probably not ok yet. Waiting for it to return some Kontena json."
+Endpoint says 200, but it is possible that status code is 200 before actually running. Waiting for it to return some Kontena json.."
 
 while true; do
   set +e
-  CONTENTS=$(curl -k --connect-timeout 2 -s $MASTER_URL)
-  [[ $CONTENTS =~ "Kontena Master" ]] && break
+  CONTENTS=$(curl -k --connect-timeout 2 -s $MASTER_URL/v1/ping)
+  [[ $CONTENTS =~ "pong" ]] && break
   set -e
 
   printf "."
