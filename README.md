@@ -6,6 +6,17 @@ Konterraform creates a single folder with bunch of symlinks so that the folder b
 
 All Terraform resources are configured with variables so that you can change the infrastructure by changing the variables, not by modifying the terraform files. Variables have been set to sensible defaults so that the number of required changes would be low (at least for initial testing.)
 
+Supported environments:
+
+* AWS (this document)
+* [Azure](README.azure.md)
+
+WIP environments:
+
+* Google Cloud Platform
+* Packet
+* Softlayer
+
 Components:
 
 * `recipes/` contains scripts to create different styles of Kontena environments from..

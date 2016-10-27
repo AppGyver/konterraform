@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -e
+source recipes/common/params.sh
+
+helpers/apply_stage $PROVIDER_NAME common $RECIPE_NAME
+
+helpers/apply_stage $PROVIDER_NAME virtual_machines/common $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME virtual_machines/common_mongos $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME virtual_machines/common_masters $RECIPE_NAME
+
+helpers/apply_stage $PROVIDER_NAME virtual_machines/mongosingle $RECIPE_NAME
+
+MONGO_HOSTNAME=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_mongo_internal_fqdn)
+echo "kontena_master_mongodb_host = \"$MONGO_HOSTNAME\"" >> vars/$PROVIDER_NAME-$RECIPE_NAME.tfvars
+
+helpers/apply_stage $PROVIDER_NAME virtual_machines/master $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME security_rules/mongo_master $RECIPE_NAME
+
+helpers/apply_stage $PROVIDER_NAME loadbalancers/masters/tcp_http $RECIPE_NAME
+
+MASTER_HOSTNAME=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_loadbalancer_masters_public_ip_fqdn)
+MASTER_URL="http://$MASTER_HOSTNAME"
+
+source recipes/common/create_grid_and_append_master_uri_and_token.sh
+
+helpers/apply_stage $PROVIDER_NAME virtual_machines/common_nodes $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME virtual_machines/node $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME loadbalancers/nodes/tcp_http $RECIPE_NAME
+
+NODE_COUNT=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_node_count)
+helpers/watch_grid_joining $GRID_NAME $NODE_COUNT
+
+helpers/apply_stage $PROVIDER_NAME workarounds/bug_1136 $RECIPE_NAME

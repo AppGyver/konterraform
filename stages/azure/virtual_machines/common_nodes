@@ -1,0 +1,5 @@
+library/azure/public_ips/loadbalancers/nodes
+library/azure/security_groups/nodes
+library/azure/network_interfaces/node
+library/azure/public_ips/node
+library/azure/availability_sets/node

@@ -1,0 +1,4 @@
+library/azure/security_groups/mongos
+library/azure/network_interfaces/mongo
+library/azure/public_ips/mongo
+library/azure/availability_sets/mongo
