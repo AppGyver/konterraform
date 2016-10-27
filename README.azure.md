@@ -2,6 +2,8 @@
 
 See [README.md](README.md) for general usage and Terraform AzureRM docs on how to get secrets (you have to to the classic portal, the alternative method described didn't work).
 
+Sample `vars/azure-recipe.tfvars`:
+
 ```
 name = "yourprefix"
 
