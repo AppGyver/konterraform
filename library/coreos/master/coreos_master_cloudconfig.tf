@@ -18,6 +18,7 @@ data "template_file" "coreos_cloudconfig_master" {
     vault_key = "${var.kontena_master_vault_key}"
     max_threads = "${var.kontena_master_max_threads}"
     web_concurrency = "${var.kontena_master_web_concurrency}"
+    initial_admin_code = "${var.kontena_master_initial_admin_code}"
 
     write_files_ssl_cert = "${var.kontena_master_coreos_write_files_ssl_cert}"
   }

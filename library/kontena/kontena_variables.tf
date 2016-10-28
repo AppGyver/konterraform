@@ -16,6 +16,10 @@ variable "kontena_master_vault_iv" {
 variable "kontena_master_vault_key" {
   default = "konterraformdefaultmastervaultkeykonterraformdefaultmastervaultkeykonterraformdefaultmastervault"
 }
+variable "kontena_master_initial_admin_code" {
+  default = "konterraforminitialadmincode"
+}
+
 variable "kontena_master_max_threads" { default = "16" }
 variable "kontena_master_web_concurrency" { default = "2" }
 variable "kontena_master_coreos_write_files_ssl_cert" { default = "" }
