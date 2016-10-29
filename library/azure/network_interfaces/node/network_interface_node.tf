@@ -6,7 +6,7 @@ resource "azurerm_network_interface" "kontena_node" {
 
   network_security_group_id = "${azurerm_network_security_group.kontena_nodes.id}"
 
-  internal_dns_name_label = "kontena-node-${count.index}"
+  internal_dns_name_label = "${var.name}-kontena-node-${count.index}"
 
   ip_configuration {
       name = "${var.name}-kontena-node-${count.index}"
