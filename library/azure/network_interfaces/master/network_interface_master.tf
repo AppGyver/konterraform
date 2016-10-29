@@ -6,7 +6,7 @@ resource "azurerm_network_interface" "kontena_master" {
 
   network_security_group_id = "${azurerm_network_security_group.kontena_masters.id}"
 
-  internal_dns_name_label = "kontena-master-${count.index}"
+  internal_dns_name_label = "${var.name}-kontena-master-${count.index}"
 
   ip_configuration {
       name = "${var.name}-kontena-master-${count.index}"
