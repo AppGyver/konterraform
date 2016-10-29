@@ -166,6 +166,7 @@ that will "snapshot" `mongo:3.0`, `kontena-haproxy`, `kontena/mongo-backup:3.0` 
 - Sometimes when `destroying...` it can be that an extra resource is running and preventing the deletion (go to AWS console and delete that)
 - Set `KONTERRAFORM_FRONTEND=noninteractive` for fully automated setup
 - Taint (force recreate) with `bin/taint aws singlemongoalbed null_resource.kontena_provisioner_node_first.0`
+- See systemd failures with: `systemctl status failed-service`
 - S3 requires that resource names do not use dashes, so you can not use `something_something` as a name (or in your prefix)
 
 ## terraform pls
