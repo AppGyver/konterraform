@@ -4,7 +4,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "Current node: $(hostname)"
 echo "Current script directory: $DIR"
 
-node_index=$(echo $(hostname) | cut -d "-" -f 3)
+node_index=$(echo $(hostname) | rev | cut -d "-" -f 1 | rev)
 if [ ! "$node_index" == "0" ]; then
   echo "Only running on node 0, skipping this node ($node_index)"
   exit 0

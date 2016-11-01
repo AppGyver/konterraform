@@ -12,6 +12,7 @@ ${write_files_ssl_cert}
       KONTENA_VERSION=${version}
       KONTENA_VAULT_IV=${vault_iv}
       KONTENA_VAULT_KEY=${vault_key}
+      KONTENA_INITIAL_ADMIN_CODE=${initial_admin_code}
       KONTENA_WEB_CONCURRENCY=${web_concurrency}
       KONTENA_MAX_THREADS=${max_threads}
       MONGODB_URI=${mongodb_uri}
@@ -69,6 +70,7 @@ coreos:
             -e WEB_CONCURRENCY=$${KONTENA_WEB_CONCURRENCY} \
             -e MAX_THREADS=$${KONTENA_MAX_THREADS} \
             -e VAULT_KEY=$${KONTENA_VAULT_KEY} -e VAULT_IV=$${KONTENA_VAULT_IV} \
+            -e INITIAL_ADMIN_CODE=$${KONTENA_INITIAL_ADMIN_CODE} \
             kontena/server:$${KONTENA_VERSION}
         ExecStop=/usr/bin/docker stop kontena-server-api
 

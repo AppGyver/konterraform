@@ -1,8 +1,9 @@
 resource "aws_elb" "kontena_nodes_tcp" {
-  name = "${var.name}-kontena-nodes-tcp"
+  // 32 char limit..
+  name = "${var.name}-k-n-tcp"
 
   tags {
-    Name = "${var.name}-kontena-nodes-tcp"
+    Name = "${var.name}-k-n-tcp"
   }
 
   security_groups = ["${aws_security_group.kontena_elb_nodes.id}"]

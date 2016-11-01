@@ -81,7 +81,7 @@ aws_instance_node_root_block_device_delete_on_termination = "true"
 
 Step 2: Run the script
 
-`$ recipes/aws/singlemongoalbed/create yourgridname 3 yourkontena@email.com yourpassword`
+`$ recipes/aws/singlemongoalbed/create yourmastername yourgridname 3 yourkontena@email.com yourpassword`
 
 Accept changes by pressing enter or by setting `KONTERRAFORM_FRONTEND=noninteractive` environment variable.
 
@@ -125,7 +125,7 @@ Then do the same for `nodegrid` AND override the default CIDR block (because eac
 ```
 $ ln -s nodegrid recipes/aws/mynodegrid
 $ cat > vars/mynodes.tfvars
-$ recipes/aws/mynodes/create yourgridname 3 yourkontena@email.com yourpassword http://<mymasterurl>
+$ recipes/aws/mynodes/create yourmastername yourgridname 3 yourkontena@email.com yourpassword http://<mymasterurl>
 ```
 
 ### Using different CIDR blocks
@@ -159,7 +159,7 @@ kontena_master_coreos_write_files_ssl_cert = "
 - Sometimes when `destroying...` it can be that an extra resource is running and preventing the deletion (go to AWS console and delete that)
 - Set `KONTERRAFORM_FRONTEND=noninteractive` for fully automated setup
 - Taint (force recreate) with `bin/taint aws singlemongoalbed null_resource.kontena_provisioner_node_first.0`
-
+- S3 requires that resource names do not use dashes, so you can not use `something_something` as a name (or in your prefix)
 
 ## terraform pls
 
