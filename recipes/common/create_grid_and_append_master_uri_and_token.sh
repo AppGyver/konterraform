@@ -1,10 +1,15 @@
 [ ! $MASTER_URL ] && echo "MASTER_URL missing" && exit 1
+[ ! $MASTER_NAME ] && echo "MASTER_NAME missing" && exit 1
+[ ! $GRID_INITIAL_SIZE ] && echo "GRID_INITIAL_SIZE missing" && exit 1
+[ ! $GRID_NAME ] && echo "GRID_NAME missing" && exit 1
 
 helpers/master_wait $MASTER_URL
 
+source library/support/abort_if_bug_1262.sh
+
 kontena master login \
   --code konterraforminitialadmincode \
-  --name "${GRID_NAME}_master" \
+  --name "$MASTER_NAME" \
   $MASTER_URL
 
 kontena grid create --initial-size=$GRID_INITIAL_SIZE $GRID_NAME

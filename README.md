@@ -81,7 +81,7 @@ aws_instance_node_root_block_device_delete_on_termination = "true"
 
 Step 2: Run the script
 
-`$ recipes/aws/singlemongoalbed/create yourgridname 3 yourkontena@email.com yourpassword`
+`$ recipes/aws/singlemongoalbed/create yourmastername yourgridname 3 yourkontena@email.com yourpassword`
 
 Accept changes by pressing enter or by setting `KONTERRAFORM_FRONTEND=noninteractive` environment variable.
 
@@ -125,7 +125,7 @@ Then do the same for `nodegrid` AND override the default CIDR block (because eac
 ```
 $ ln -s nodegrid recipes/aws/mynodegrid
 $ cat > vars/mynodes.tfvars
-$ recipes/aws/mynodes/create yourgridname 3 yourkontena@email.com yourpassword http://<mymasterurl>
+$ recipes/aws/mynodes/create yourmastername yourgridname 3 yourkontena@email.com yourpassword http://<mymasterurl>
 ```
 
 ### Using different CIDR blocks
