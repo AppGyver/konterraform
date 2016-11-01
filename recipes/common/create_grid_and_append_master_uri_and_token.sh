@@ -8,7 +8,7 @@ helpers/master_wait $MASTER_URL
 source library/support/abort_if_bug_1262.sh
 
 kontena master login \
-  --code konterraforminitialadmincode \
+  --code "$(bin/output aws mega-eu-west-1 kontena_master_initial_admin_code)" \
   --name "$MASTER_NAME" \
   $MASTER_URL
 
