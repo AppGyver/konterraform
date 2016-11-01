@@ -159,7 +159,7 @@ kontena_master_coreos_write_files_ssl_cert = "
 - Sometimes when `destroying...` it can be that an extra resource is running and preventing the deletion (go to AWS console and delete that)
 - Set `KONTERRAFORM_FRONTEND=noninteractive` for fully automated setup
 - Taint (force recreate) with `bin/taint aws singlemongoalbed null_resource.kontena_provisioner_node_first.0`
-
+- S3 requires that resource names do not use dashes, so you can not use `something_something` as a name (or in your prefix)
 
 ## terraform pls
 
