@@ -21,5 +21,8 @@ data "template_file" "coreos_cloudconfig_mastermongo" {
 
     mongo_version = "${var.mongo_version}"
     bind_ip = "${var.mongo_bind_ip}"
+
+    kontena_haproxy_image = "${var.kontena_haproxy_image}"
+    kontena_haproxy_version = "${var.kontena_haproxy_version}"
   }
 }

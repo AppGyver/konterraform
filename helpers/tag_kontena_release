@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+VERSION=$1
+NAMESPACE=$2
+TAG=$3
+
+helpers/pull_tag_push kontena/server $VERSION $NAMESPACE/kontena-server $TAG
+helpers/pull_tag_push kontena/agent $VERSION $NAMESPACE/kontena-agent $TAG

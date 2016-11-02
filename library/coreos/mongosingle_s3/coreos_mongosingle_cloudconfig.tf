@@ -12,16 +12,20 @@ data "template_file" "coreos_cloudconfig_mongosingle" {
     coreos_locksmith_window_length = "${var.coreos_mongosingle_locksmith_window_length}"
     coreos_update_reboot_strategy = "${var.coreos_mongosingle_update_reboot_strategy}"
 
+    mongo_image =  "${var.mongo_image}"
     mongo_version = "${var.mongo_version}"
     bind_ip = "${var.mongo_bind_ip}"
 
     name = "${var.name}"
 
+    log_archiver_image = "${var.kontena_log_archiver_image}"
+    log_archiver_version = "${var.kontena_log_archiver_version}"
     LOG_ARCHIVER_S3_ACCESS_KEY = "${aws_iam_access_key.kontena_log_archiver.id}"
     LOG_ARCHIVER_S3_SECRET_KEY = "${aws_iam_access_key.kontena_log_archiver.secret}"
     LOG_ARCHIVER_S3_REGION = "${aws_s3_bucket.kontena_log_archiver.region}"
     LOG_ARCHIVER_S3_BUCKET = "${replace(aws_s3_bucket.kontena_log_archiver.arn, "arn:aws:s3:::", "")}"
 
+    mongo_backup_image = "${var.kontena_mongo_backup_image}"
     mongo_backup_version = "${var.kontena_mongo_backup_version}"
     MONGO_BACKUP_INTERVAL = "${var.kontena_mongo_backup_interval}"
     MONGO_BACKUP_S3_ACCESS_KEY = "${aws_iam_access_key.kontena_mongo_backup.id}"

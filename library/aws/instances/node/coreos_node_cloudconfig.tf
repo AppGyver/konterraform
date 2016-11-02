@@ -27,5 +27,8 @@ data "template_file" "coreos_cloudconfig_node" {
     master_uri = "${var.kontena_agent_master_uri}"
     token = "${var.kontena_agent_token}"
     agent_memory_limit = "${var.kontena_agent_memory_limit}"
+
+    kontena_agent_image = "${var.kontena_agent_image}"
+    kontena_agent_version = "${var.kontena_agent_version}"
   }
 }

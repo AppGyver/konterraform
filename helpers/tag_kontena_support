@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+NAMESPACE=$1
+TAG=$2
+
+helpers/pull_tag_push mongo                 3.0     $NAMESPACE/kontena-mongo        $TAG
+helpers/pull_tag_push kontena/haproxy       latest  $NAMESPACE/kontena-haproxy      $TAG
+helpers/pull_tag_push kontena/log-archiver  latest  $NAMESPACE/kontena-log-archiver $TAG
+helpers/pull_tag_push kontena/mongo-backup  3.0     $NAMESPACE/kontena-mongo-backup $TAG

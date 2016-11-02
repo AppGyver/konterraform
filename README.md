@@ -152,6 +152,28 @@ kontena_master_coreos_write_files_ssl_cert = "
       ...
 ```
 
+## Updating Kontena
+
+For automatic updates use the tag `:latest` and reboot the servers when you want to update.
+
+For more controlled releases you should run Kontena images from your own repositories.
+
+The included script:
+```
+helpers/tag_kontena_release 0.16.1 yournamespace yourtag
+```
+will pull `kontena/server:0.16.1` and `kontena/agent:0.16.1` and push them to Dockerhub at `yournamespace/kontena-{server/agent}:yourtag`
+
+
+There is also another script:
+
+```
+helpers/tag_kontena_support yournamespace yourtag
+```
+
+that will "snapshot" `mongo:3.0`, `kontena-haproxy`, `kontena/mongo-backup:3.0` and `kontena/log-archiver` at current time from whatever is the `:latest` when the command is run.
+
+
 ## PRO-TIPS
 
 - Terraform supports overrides https://www.terraform.io/docs/configuration/override.html

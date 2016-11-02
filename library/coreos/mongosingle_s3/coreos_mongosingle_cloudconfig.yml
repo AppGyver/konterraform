@@ -141,14 +141,14 @@ coreos:
         [Service]
         Restart=always
         RestartSec=5
-        ExecStartPre=/usr/bin/docker pull mongo:${mongo_version}
+        ExecStartPre=/usr/bin/docker pull ${mongo_image}:${mongo_version}
         ExecStartPre=-/usr/bin/docker create --name=kontena-server-mongo-data mongo:${mongo_version}
         ExecStartPre=-/usr/bin/docker stop kontena-server-mongo
         ExecStartPre=-/usr/bin/docker rm kontena-server-mongo
         ExecStart=/usr/bin/docker run --name=kontena-server-mongo \
             --volumes-from=kontena-server-mongo-data \
             --publish "27017:27017" \
-            mongo:${mongo_version} mongod --smallfiles --bind_ip "${bind_ip}"
+            ${mongo_image}:${mongo_version} mongod --smallfiles --bind_ip "${bind_ip}"
         ExecStop=/usr/bin/docker stop kontena-server-mongo
 
     - name: kontena-log-archiver.service
@@ -165,7 +165,7 @@ coreos:
         [Service]
         Restart=always
         RestartSec=5
-        ExecStartPre=/usr/bin/docker pull kontena/log-archiver:latest
+        ExecStartPre=/usr/bin/docker pull ${log_archiver_image}:${log_archiver_version}
         ExecStartPre=-/usr/bin/docker stop kontena-log-archiver
         ExecStartPre=-/usr/bin/docker rm kontena-log-archiver
         ExecStartPre=-/usr/bin/docker exec -it kontena-server-mongo mongo --eval 'db.createCollection("container_logs_tail", {capped: true, size: 5242880})' localhost/${name}_master
@@ -174,7 +174,7 @@ coreos:
             --env-file=/etc/kontena-log-archiver.env \
             -v /etc/kontena-log-archiver/etc:/fluentd/etc \
             -v /etc/kontena-log-archiver/plugins:/fluentd/plugins \
-            kontena/log-archiver:latest
+            ${log_archiver_image}:${log_archiver_version}
         ExecStop=/usr/bin/docker stop kontena-log-archiver
 
     - name: kontena-mongo-backup.service
@@ -191,10 +191,10 @@ coreos:
         [Service]
         Restart=always
         RestartSec=5
-        ExecStartPre=/usr/bin/docker pull kontena/mongo-backup:${mongo_backup_version}
+        ExecStartPre=/usr/bin/docker pull ${mongo_backup_image}:${mongo_backup_version}
         ExecStartPre=-/usr/bin/docker stop kontena-mongo-backup
         ExecStartPre=-/usr/bin/docker rm kontena-mongo-backup
         ExecStart=/usr/bin/docker run --name=kontena-mongo-backup \
             --link kontena-server-mongo:mongo \
             --env-file=/etc/kontena-mongo-backup.env \
-          kontena/mongo-backup:${mongo_backup_version}
+          ${mongo_backup_image}:${mongo_backup_version}

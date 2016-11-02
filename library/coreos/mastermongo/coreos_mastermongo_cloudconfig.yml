@@ -29,7 +29,7 @@ write_files:
       /usr/bin/docker run --name=kontena-server-haproxy \
         --link kontena-server-api:kontena-server-api \
         -e SSL_CERT="$SSL_CERT" -e BACKEND_PORT=9292 \
-        -p 80:80 -p 443:443 kontena/haproxy:latest
+        -p 80:80 -p 443:443 ${kontena_haproxy_image}:${kontena_haproxy_version}
 
 coreos:
   locksmith:
@@ -63,14 +63,14 @@ coreos:
         EnvironmentFile=-/etc/kontena-server.custom.env
         ExecStartPre=-/usr/bin/docker stop kontena-server-api
         ExecStartPre=-/usr/bin/docker rm kontena-server-api
-        ExecStartPre=/usr/bin/docker pull kontena/server:$${KONTENA_VERSION}
+        ExecStartPre=/usr/bin/docker pull ${kontena_master_image}:$${KONTENA_VERSION}
         ExecStart=/usr/bin/docker run --name kontena-server-api \
             --link kontena-server-mongo \
             -e MONGODB_URI=$${MONGODB_URI} \
             -e WEB_CONCURRENCY=$${KONTENA_WEB_CONCURRENCY} \
             -e MAX_THREADS=$${KONTENA_MAX_THREADS} \
             -e VAULT_KEY=$${KONTENA_VAULT_KEY} -e VAULT_IV=$${KONTENA_VAULT_IV} \
-            kontena/server:$${KONTENA_VERSION}
+            ${kontena_master_image}:$${KONTENA_VERSION}
         ExecStop=/usr/bin/docker stop kontena-server-api
 
     - name: kontena-server-haproxy.service
@@ -94,7 +94,7 @@ coreos:
         EnvironmentFile=-/etc/kontena-server.custom.env
         ExecStartPre=-/usr/bin/docker stop kontena-server-haproxy
         ExecStartPre=-/usr/bin/docker rm kontena-server-haproxy
-        ExecStartPre=/usr/bin/docker pull kontena/haproxy:latest
+        ExecStartPre=/usr/bin/docker pull ${kontena_haproxy_image}:${kontena_haproxy_version}
         ExecStart=/opt/bin/kontena-haproxy.sh
         ExecStop=/usr/bin/docker stop kontena-server-haproxy
 
@@ -113,11 +113,11 @@ coreos:
         [Service]
         Restart=always
         RestartSec=5
-        ExecStartPre=/usr/bin/docker pull mongo:${mongo_version}
+        ExecStartPre=/usr/bin/docker pull ${mongo_image}:${mongo_version}
         ExecStartPre=-/usr/bin/docker create --name=kontena-server-mongo-data mongo:${mongo_version}
         ExecStartPre=-/usr/bin/docker stop kontena-server-mongo
         ExecStartPre=-/usr/bin/docker rm kontena-server-mongo
         ExecStart=/usr/bin/docker run --name=kontena-server-mongo \
             --volumes-from=kontena-server-mongo-data \
-            mongo:${mongo_version} mongod --smallfiles --bind_ip "${bind_ip}"
+            ${mongo_image}:${mongo_version} mongod --smallfiles --bind_ip "${bind_ip}"
         ExecStop=/usr/bin/docker stop kontena-server-mongo

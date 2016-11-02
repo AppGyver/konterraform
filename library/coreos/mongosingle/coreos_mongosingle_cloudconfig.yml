@@ -29,12 +29,12 @@ coreos:
         [Service]
         Restart=always
         RestartSec=5
-        ExecStartPre=/usr/bin/docker pull mongo:${mongo_version}
+        ExecStartPre=/usr/bin/docker pull ${mongo_image}:${mongo_version}
         ExecStartPre=-/usr/bin/docker create --name=kontena-server-mongo-data mongo:${mongo_version}
         ExecStartPre=-/usr/bin/docker stop kontena-server-mongo
         ExecStartPre=-/usr/bin/docker rm kontena-server-mongo
         ExecStart=/usr/bin/docker run --name=kontena-server-mongo \
             --volumes-from=kontena-server-mongo-data \
             --net=host \
-            mongo:${mongo_version} mongod --smallfiles --bind_ip "${bind_ip}"
+            ${mongo_image}:${mongo_version} mongod --smallfiles --bind_ip "${bind_ip}"
         ExecStop=/usr/bin/docker stop kontena-server-mongo

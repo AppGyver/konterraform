@@ -84,7 +84,7 @@ coreos:
         EnvironmentFile=-/etc/kontena-agent.custom.env
         ExecStartPre=-/usr/bin/docker stop kontena-agent
         ExecStartPre=-/usr/bin/docker rm kontena-agent
-        ExecStartPre=-/usr/bin/docker pull kontena/agent:$${KONTENA_VERSION}
+        ExecStartPre=-/usr/bin/docker pull ${kontena_agent_image}:$${kontena_agent_version}
         ExecStart=/usr/bin/docker run --name kontena-agent \
             -e KONTENA_URI=$${KONTENA_URI} \
             -e KONTENA_TOKEN=$${KONTENA_TOKEN} \
@@ -93,4 +93,4 @@ coreos:
             -v=/etc/kontena-agent.env:/etc/kontena.env \
             --net=host \
             --memory ${agent_memory_limit} \
-            kontena/agent:$${KONTENA_VERSION}
+            ${kontena_agent_image}:${kontena_agent_version}
