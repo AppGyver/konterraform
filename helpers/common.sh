@@ -1,4 +1,5 @@
 set -e
+bin/doctor
 
 function hitEnter() {
   if [ -z "$KONTERRAFORM_FRONTEND" ]; then
