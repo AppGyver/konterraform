@@ -1,6 +1,6 @@
 variable "coreos_node_locksmith_window_start" { default = "Tue 08:00" }
 variable "coreos_node_locksmith_window_length" { default = "1h" }
-variable "coreos_node_update_reboot_strategy" { default = "reboot" }
+variable "coreos_node_update_reboot_strategy" { default = "etcd-lock" }
 
 variable "coreos_node_hostname_midfix" { default = "node" }
 variable "coreos_node_dns_server" { default = "10.0.0.2" }
