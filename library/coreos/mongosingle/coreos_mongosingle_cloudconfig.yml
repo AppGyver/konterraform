@@ -5,11 +5,18 @@ write_files:
         [Service]
         Environment='DOCKER_CGROUPS=--exec-opt native.cgroupdriver=cgroupfs'
 
+  - path: /etc/kontena-mongo.env
+    permissions: 0600
+    owner: root
+    content: |
+      KONTENA_MONGO_IMAGE=${kontena_mongo_image}
+      KONTENA_MONGO_VERSION=${kontena_mongo_version}
+      KONTENA_MONGO_BIND_IP=${kontena_mongo_bind_ip}
+
 coreos:
   locksmith:
     window-start: ${coreos_locksmith_window_start}
     window-length: ${coreos_locksmith_window_length}
-
   update:
     reboot-strategy: ${coreos_update_reboot_strategy}
 
@@ -26,15 +33,18 @@ coreos:
         Documentation=http://www.mongodb.org/
         Requires=network-online.target
         Requires=docker.service
+
         [Service]
         Restart=always
         RestartSec=5
-        ExecStartPre=/usr/bin/docker pull ${mongo_image}:${mongo_version}
-        ExecStartPre=-/usr/bin/docker create --name=kontena-server-mongo-data mongo:${mongo_version}
+        EnvironmentFile=/etc/kontena-mongo.env
+        EnvironmentFile=-/etc/kontena-mongo.custom.env
+        ExecStartPre=/usr/bin/docker pull $${KONTENA_MONGO_IMAGE}:$${KONTENA_MONGO_VERSION}
+        ExecStartPre=-/usr/bin/docker create --name=kontena-server-mongo-data $${KONTENA_MONGO_IMAGE}:$${KONTENA_MONGO_VERSION}
         ExecStartPre=-/usr/bin/docker stop kontena-server-mongo
         ExecStartPre=-/usr/bin/docker rm kontena-server-mongo
         ExecStart=/usr/bin/docker run --name=kontena-server-mongo \
-            --volumes-from=kontena-server-mongo-data \
-            --net=host \
-            ${mongo_image}:${mongo_version} mongod --smallfiles --bind_ip "${bind_ip}"
+          --volumes-from=kontena-server-mongo-data \
+          --publish "27017:27017" \
+          $${KONTENA_MONGO_IMAGE}:$${KONTENA_MONGO_VERSION} mongod --smallfiles --bind_ip "$${KONTENA_MONGO_BIND_IP}"
         ExecStop=/usr/bin/docker stop kontena-server-mongo

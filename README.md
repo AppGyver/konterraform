@@ -138,20 +138,6 @@ aws_public_subnet_cidr_blocks = ["10.32.1.0/24", "10.32.2.0/24", "10.32.3.0/24"]
 coreos_node_dns_server = "10.32.0.2"
 ```
 
-### Master SSL cert
-
-Use ALB with HTTPS or add this to vars:
-
-```
-kontena_master_coreos_write_files_ssl_cert = "
-  - path: /etc/kontena-server.pem
-    permissions: 0600
-    owner: root
-    content: |
-      -----BEGIN CERTIFICATE-----
-      ...
-```
-
 ## Updating Kontena
 
 For automatic updates use the tag `:latest` and reboot the servers when you want to update.

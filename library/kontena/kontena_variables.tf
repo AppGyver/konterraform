@@ -3,9 +3,9 @@ variable "kontena_node_count" { default = 0 }
 variable "kontena_mongo_count" { default = 0 }
 
 # MONGO
-variable "mongo_image" { default = "mongo" }
-variable "mongo_version" { default = "3.0" }
-variable "mongo_bind_ip" { default = "0.0.0.0" }
+variable "kontena_mongo_image" { default = "mongo" }
+variable "kontena_mongo_version" { default = "3.0" }
+variable "kontena_mongo_bind_ip" { default = "0.0.0.0" }
 
 # KONTENA-MASTER
 variable "kontena_master_image" { default = "kontena/server" }
@@ -24,7 +24,6 @@ variable "kontena_master_initial_admin_code" {
 
 variable "kontena_master_max_threads" { default = "16" }
 variable "kontena_master_web_concurrency" { default = "2" }
-variable "kontena_master_coreos_write_files_ssl_cert" { default = "" }
 
 # KONTENA-AGENT
 variable "kontena_agent_image" { default = "kontena/agent" }

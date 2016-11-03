@@ -22,11 +22,11 @@ data "template_file" "coreos_cloudconfig_node" {
     coreos_locksmith_window_length = "${var.coreos_node_locksmith_window_length}"
     coreos_update_reboot_strategy = "${var.coreos_node_update_reboot_strategy}"
 
-    version = "${var.kontena_agent_version}"
-    peer_interface = "${var.kontena_agent_peer_interface}"
-    master_uri = "${var.kontena_agent_master_uri}"
-    token = "${var.kontena_agent_token}"
-    agent_memory_limit = "${var.kontena_agent_memory_limit}"
+    kontena_agent_version = "${var.kontena_agent_version}"
+    kontena_agent_peer_interface = "${var.kontena_agent_peer_interface}"
+    kontena_agent_master_uri = "${var.kontena_agent_master_uri}"
+    kontena_agent_token = "${var.kontena_agent_token}"
+    kontena_agent_memory_limit = "${var.kontena_agent_memory_limit}"
 
     kontena_agent_image = "${var.kontena_agent_image}"
     kontena_agent_version = "${var.kontena_agent_version}"

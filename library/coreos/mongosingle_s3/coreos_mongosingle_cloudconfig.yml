@@ -5,15 +5,39 @@ write_files:
       [Service]
       Environment='DOCKER_CGROUPS=--exec-opt native.cgroupdriver=cgroupfs'
 
+  - path: /etc/kontena-mongo.env
+    permissions: 0600
+    owner: root
+    content: |
+      KONTENA_MONGO_IMAGE=${kontena_mongo_image}
+      KONTENA_MONGO_VERSION=${kontena_mongo_version}
+      KONTENA_MONGO_BIND_IP=${kontena_mongo_bind_ip}
+
   - path: /etc/kontena-log-archiver.env
     permissions: 0600
     owner: root
     content: |
-      S3_ACCESS_KEY=${LOG_ARCHIVER_S3_ACCESS_KEY}
-      S3_SECRET_KEY=${LOG_ARCHIVER_S3_SECRET_KEY}
-      S3_REGION=${LOG_ARCHIVER_S3_REGION}
-      S3_BUCKET=${LOG_ARCHIVER_S3_BUCKET}
+      KONTENA_LOG_ARCHIVER_IMAGE=${kontena_log_archiver_image}
+      KONTENA_LOG_ARCHIVER_VERSION=${kontena_log_archiver_version}
+      S3_ACCESS_KEY=${kontena_log_archiver_s3_access_key}
+      S3_SECRET_KEY=${kontena_log_archiver_s3_secret_key}
+      S3_REGION=${kontena_log_archiver_s3_region}
+      S3_BUCKET=${kontena_log_archiver_s3_bucket}
       MONGODB_URL=mongodb://mongo/${name}_master
+
+  - path: /etc/kontena-mongo-backup.env
+    permissions: 0600
+    owner: root
+    content: |
+      KONTENA_MONGO_BACKUP_IMAGE=${kontena_mongo_backup_image}
+      KONTENA_MONGO_BACKUP_VERSION=${kontena_mongo_backup_version}
+      MONGODB_HOST=mongo
+      INTERVAL=${kontena_mongo_backup_interval}
+      S3_ACCESS_KEY_ID=${kontena_mongo_backup_s3_access_key}
+      S3_SECRET_ACCESS_KEY=${kontena_mongo_backup_s3_secret_key}
+      S3_REGION=${kontena_mongo_backup_s3_region}
+      S3_BUCKET=${kontena_mongo_backup_s3_bucket}
+      S3_PATH=${kontena_mongo_backup_s3_path}
 
   - path: /etc/kontena-log-archiver/plugins/bson_monkey.rb
     permissions: 0644
@@ -104,23 +128,10 @@ write_files:
         </store>
       </match>
 
-  - path: /etc/kontena-mongo-backup.env
-    permissions: 0600
-    owner: root
-    content: |
-      MONGODB_HOST=mongo
-      INTERVAL=${MONGO_BACKUP_INTERVAL}
-      S3_ACCESS_KEY_ID=${MONGO_BACKUP_S3_ACCESS_KEY}
-      S3_SECRET_ACCESS_KEY=${MONGO_BACKUP_S3_SECRET_KEY}
-      S3_REGION=${MONGO_BACKUP_S3_REGION}
-      S3_BUCKET=${MONGO_BACKUP_S3_BUCKET}
-      S3_PATH=${MONGO_BACKUP_S3_PATH}
-
 coreos:
   locksmith:
     window-start: ${coreos_locksmith_window_start}
     window-length: ${coreos_locksmith_window_length}
-
   update:
     reboot-strategy: ${coreos_update_reboot_strategy}
 
@@ -141,14 +152,16 @@ coreos:
         [Service]
         Restart=always
         RestartSec=5
-        ExecStartPre=/usr/bin/docker pull ${mongo_image}:${mongo_version}
-        ExecStartPre=-/usr/bin/docker create --name=kontena-server-mongo-data mongo:${mongo_version}
+        EnvironmentFile=/etc/kontena-mongo.env
+        EnvironmentFile=-/etc/kontena-mongo.custom.env
+        ExecStartPre=/usr/bin/docker pull $${KONTENA_MONGO_IMAGE}:$${KONTENA_MONGO_VERSION}
+        ExecStartPre=-/usr/bin/docker create --name=kontena-server-mongo-data $${KONTENA_MONGO_IMAGE}:$${KONTENA_MONGO_VERSION}
         ExecStartPre=-/usr/bin/docker stop kontena-server-mongo
         ExecStartPre=-/usr/bin/docker rm kontena-server-mongo
         ExecStart=/usr/bin/docker run --name=kontena-server-mongo \
-            --volumes-from=kontena-server-mongo-data \
-            --publish "27017:27017" \
-            ${mongo_image}:${mongo_version} mongod --smallfiles --bind_ip "${bind_ip}"
+          --volumes-from=kontena-server-mongo-data \
+          --publish "27017:27017" \
+          $${KONTENA_MONGO_IMAGE}:$${KONTENA_MONGO_VERSION} mongod --smallfiles --bind_ip "$${KONTENA_MONGO_BIND_IP}"
         ExecStop=/usr/bin/docker stop kontena-server-mongo
 
     - name: kontena-log-archiver.service
@@ -165,16 +178,22 @@ coreos:
         [Service]
         Restart=always
         RestartSec=5
-        ExecStartPre=/usr/bin/docker pull ${log_archiver_image}:${log_archiver_version}
+        EnvironmentFile=/etc/kontena-log-archiver.env
+        EnvironmentFile=-/etc/kontena-log-archiver.custom.env
+        ExecStartPre=/usr/bin/docker pull $${KONTENA_LOG_ARCHIVER_IMAGE}:$${KONTENA_LOG_ARCHIVER_VERSION}
         ExecStartPre=-/usr/bin/docker stop kontena-log-archiver
         ExecStartPre=-/usr/bin/docker rm kontena-log-archiver
         ExecStartPre=-/usr/bin/docker exec -it kontena-server-mongo mongo --eval 'db.createCollection("container_logs_tail", {capped: true, size: 5242880})' localhost/${name}_master
         ExecStart=/usr/bin/docker run --name=kontena-log-archiver \
-            --link kontena-server-mongo:mongo \
-            --env-file=/etc/kontena-log-archiver.env \
-            -v /etc/kontena-log-archiver/etc:/fluentd/etc \
-            -v /etc/kontena-log-archiver/plugins:/fluentd/plugins \
-            ${log_archiver_image}:${log_archiver_version}
+          -e S3_ACCESS_KEY=$${S3_ACCESS_KEY} \
+          -e S3_SECRET_KEY=$${S3_SECRET_KEY} \
+          -e S3_REGION=$${S3_REGION} \
+          -e S3_BUCKET=$${S3_BUCKET} \
+          -e MONGODB_URL=$${MONGODB_URL} \
+          --link kontena-server-mongo:mongo \
+          -v /etc/kontena-log-archiver/etc:/fluentd/etc \
+          -v /etc/kontena-log-archiver/plugins:/fluentd/plugins \
+          $${KONTENA_LOG_ARCHIVER_IMAGE}:$${KONTENA_LOG_ARCHIVER_VERSION}
         ExecStop=/usr/bin/docker stop kontena-log-archiver
 
     - name: kontena-mongo-backup.service
@@ -191,10 +210,18 @@ coreos:
         [Service]
         Restart=always
         RestartSec=5
-        ExecStartPre=/usr/bin/docker pull ${mongo_backup_image}:${mongo_backup_version}
+        EnvironmentFile=/etc/kontena-mongo-backup.env
+        EnvironmentFile=-/etc/kontena-mongo-backup.custom.env
+        ExecStartPre=/usr/bin/docker pull $${KONTENA_MONGO_BACKUP_IMAGE}:$${KONTENA_MONGO_BACKUP_VERSION}
         ExecStartPre=-/usr/bin/docker stop kontena-mongo-backup
         ExecStartPre=-/usr/bin/docker rm kontena-mongo-backup
         ExecStart=/usr/bin/docker run --name=kontena-mongo-backup \
-            --link kontena-server-mongo:mongo \
-            --env-file=/etc/kontena-mongo-backup.env \
-          ${mongo_backup_image}:${mongo_backup_version}
+          -e MONGODB_HOST=$${MONGODB_HOST} \
+          -e INTERVAL=$${INTERVAL} \
+          -e S3_ACCESS_KEY_ID=$${S3_ACCESS_KEY_ID} \
+          -e S3_SECRET_ACCESS_KEY=$${S3_SECRET_ACCESS_KEY} \
+          -e S3_REGION=$${S3_REGION} \
+          -e S3_BUCKET=$${S3_BUCKET} \
+          -e S3_PATH=$${S3_PATH} \
+          --link kontena-server-mongo:$${MONGODB_HOST} \
+          $${KONTENA_MONGO_BACKUP_IMAGE}:$${KONTENA_MONGO_BACKUP_VERSION}
