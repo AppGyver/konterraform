@@ -81,7 +81,7 @@ aws_instance_node_root_block_device_delete_on_termination = "true"
 
 Step 2: Run the script
 
-`$ recipes/aws/singlemongoalbed/create yourmastername yourgridname 3 yourkontena@email.com yourpassword`
+`$ recipes/aws/singlemongoalbed/create yourmastername yourgridname 3`
 
 Accept changes by pressing enter or by setting `KONTERRAFORM_FRONTEND=noninteractive` environment variable.
 
@@ -91,7 +91,6 @@ Step 3: Profit!
 $ kontena grid show yourgridname
 yourgridname:
   uri: ws://yourprefix-kontena-master-581130411.eu-west-1.elb.amazonaws.com
-  token: h607SEO7Oj8/SqyKbGV70xVLUcPYhcLmit6VkXxN/oaXeXySim4rSJkBvOcxGgznwPfooUUl44feZQOBRvCY5w==
   stats:
     nodes: 3 of 3
     cpus: 3
