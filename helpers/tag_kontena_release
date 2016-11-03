@@ -5,5 +5,10 @@ VERSION=$1
 NAMESPACE=$2
 TAG=$3
 
+if [[ -z "$VERSION" || -z "$NAMESPACE" || -z "$TAG" ]]; then
+  echo "usage: version namespace tag"
+  exit 1
+fi
+
 helpers/pull_tag_push kontena/server $VERSION $NAMESPACE/kontena-server $TAG
 helpers/pull_tag_push kontena/agent $VERSION $NAMESPACE/kontena-agent $TAG
