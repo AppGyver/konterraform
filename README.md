@@ -124,7 +124,7 @@ Then do the same for `nodegrid` AND override the default CIDR block (because eac
 ```
 $ ln -s nodegrid recipes/aws/mynodegrid
 $ cat > vars/mynodes.tfvars
-$ recipes/aws/mynodes/create yourmastername yourgridname 3 yourkontena@email.com yourpassword http://<mymasterurl>
+$ recipes/aws/mynodes/create yourmastername yourgridname 3 http://<mymasterurl>
 ```
 
 ### Using different CIDR blocks
