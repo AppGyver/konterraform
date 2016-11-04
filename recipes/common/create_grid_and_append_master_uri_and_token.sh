@@ -2,13 +2,17 @@
 [ ! $MASTER_NAME ] && echo "MASTER_NAME missing" && exit 1
 [ ! $GRID_INITIAL_SIZE ] && echo "GRID_INITIAL_SIZE missing" && exit 1
 [ ! $GRID_NAME ] && echo "GRID_NAME missing" && exit 1
+if [ ! $MASTER_ADMIN_CODE ]; then
+  echo "WARNING: MASTER_ADMIN_CODE missing... defaulting to reading from output vars"
+  MASTER_ADMIN_CODE="$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_master_initial_admin_code)"
+fi
 
 helpers/master_wait $MASTER_URL
 
 source library/support/abort_if_bug_1262.sh
 
 kontena master login \
-  --code "$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_master_initial_admin_code)" \
+  --code "$MASTER_ADMIN_CODE" \
   --name "$MASTER_NAME" \
   $MASTER_URL
 
