@@ -1,0 +1,36 @@
+#cloud-config
+write_files:
+  - path: /etc/systemd/system/docker.service.d/50-kontena.conf
+    content: |
+        [Service]
+        Environment='DOCKER_CGROUPS=--exec-opt native.cgroupdriver=cgroupfs'
+
+coreos:
+  update:
+    reboot-strategy: reboot
+
+  units:
+    - name: kontena-server-mongo.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=kontena-server-mongo
+        After=network-online.target
+        After=docker.service
+        Description=Kontena Server MongoDB
+        Documentation=http://www.mongodb.org/
+        Requires=network-online.target
+        Requires=docker.service
+        [Service]
+        Restart=always
+        RestartSec=5
+        ExecStartPre=/usr/bin/docker pull mongo:${mongo_version}
+        ExecStartPre=-/usr/bin/docker create --name=kontena-server-mongo-data mongo:${mongo_version}
+        ExecStartPre=-/usr/bin/docker stop kontena-server-mongo
+        ExecStartPre=-/usr/bin/docker rm kontena-server-mongo
+        ExecStart=/usr/bin/docker run --name=kontena-server-mongo \
+            --volumes-from=kontena-server-mongo-data \
+            --publish "27017:27017" \
+            mongo:${mongo_version} mongod --smallfiles --bind_ip "${bind_ip}" ${mongo_opts}
+        ExecStop=/usr/bin/docker stop kontena-server-mongo

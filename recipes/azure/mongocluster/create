@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+source recipes/common/recipe_name.sh
+
+helpers/apply_stage azure common $RECIPE_NAME
+
+helpers/apply_stage azure virtual_machines/common $RECIPE_NAME
+helpers/apply_stage azure virtual_machines/common_mongos $RECIPE_NAME
+
+helpers/apply_stage azure virtual_machines/mongocluster $RECIPE_NAME

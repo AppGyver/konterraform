@@ -47,3 +47,9 @@ resource "azurerm_virtual_machine" "kontena_master" {
 
   network_interface_ids = ["${element(azurerm_network_interface.kontena_master.*.id, count.index)}"]
 }
+
+data "null_data_source" "kontena_master" {
+  input = {
+    public_ip_addresses = ["${azurerm_public_ip.kontena_master.*.ip_address}"]
+  }
+}
