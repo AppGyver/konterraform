@@ -178,3 +178,6 @@ that will "snapshot" `mongo:3.0`, `kontena-haproxy`, `kontena/mongo-backup:3.0` 
 * Using element with splat reference should scope dependency to selected resource  - https://github.com/hashicorp/terraform/issues/3449
  * Adding / removing nodes will temporarily delete all ALB attachments potentially causing minimal downtime.
 * Various template errors are really hard to debug if there is a syntax error somewhere
+
+## systemd pls
+* Service doesn't enter the "failed" state (coreos stable has 229, fixed in 230 -- mongo init retry is not possible..)- https://github.com/systemd/systemd/issues/3166
