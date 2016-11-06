@@ -8,7 +8,7 @@ resource "azurerm_network_security_rule" "kontena_mongos_master" {
   protocol = "Tcp"
   source_port_range = "*"
   destination_port_range = "*"
-  source_address_prefix = "${element(azurerm_public_ip.kontena_master.*.ip_address, count.index)}"
+  source_address_prefix = "${element(data.null_data_source.kontena_master.input.public_ip_addresses, count.index})"
   destination_address_prefix = "*"
   access = "Allow"
   priority = "20${count.index}"

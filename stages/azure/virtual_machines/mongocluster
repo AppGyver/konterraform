@@ -1,0 +1,3 @@
+library/coreos/mongo
+library/azure/virtual_machines/mongo
+library/azure/provisioners/mongocluster
