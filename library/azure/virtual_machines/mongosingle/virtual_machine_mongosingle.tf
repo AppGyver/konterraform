@@ -4,7 +4,7 @@ resource "azurerm_virtual_machine" "kontena_mongosingle" {
   name                  = "${var.name}-kontena-mongosingle-${count.index}"
   resource_group_name   = "${azurerm_resource_group.kontena.name}"
   location              = "${var.azure_location}"
-  availability_set_id   = "${azurerm_availability_set.kontena_mongo.id}"
+  availability_set_id   = "${azurerm_availability_set.kontena_mongos.id}"
 
   boot_diagnostics = {
     enabled = "${var.azure_virtual_machine_mongosingle_boot_diagnostics_enabled}"

@@ -4,7 +4,7 @@ resource "azurerm_virtual_machine" "kontena_master" {
   name                  = "${var.name}-kontena-master-${count.index}"
   resource_group_name   = "${azurerm_resource_group.kontena.name}"
   location              = "${var.azure_location}"
-  availability_set_id   = "${azurerm_availability_set.kontena_master.id}"
+  availability_set_id   = "${azurerm_availability_set.kontena_masters.id}"
 
   boot_diagnostics = {
     enabled = "${var.azure_virtual_machine_master_boot_diagnostics_enabled}"
@@ -46,10 +46,4 @@ resource "azurerm_virtual_machine" "kontena_master" {
   }
 
   network_interface_ids = ["${element(azurerm_network_interface.kontena_master.*.id, count.index)}"]
-}
-
-data "null_data_source" "kontena_master" {
-  input = {
-    public_ip_addresses = ["${azurerm_public_ip.kontena_master.*.ip_address}"]
-  }
 }

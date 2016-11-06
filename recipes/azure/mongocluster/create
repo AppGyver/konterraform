@@ -8,3 +8,10 @@ helpers/apply_stage azure virtual_machines/common $RECIPE_NAME
 helpers/apply_stage azure virtual_machines/common_mongos $RECIPE_NAME
 
 helpers/apply_stage azure virtual_machines/mongocluster $RECIPE_NAME
+
+echo "
+
+now set var kontena_master_external_ip_addresses and hit enter"
+read
+
+helpers/apply_stage azure security_rules/mongo_master_external $RECIPE_NAME

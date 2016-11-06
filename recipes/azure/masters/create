@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -e
+source recipes/common/recipe_name.sh
+source recipes/common/provider_name.sh
+
+helpers/apply_stage $PROVIDER_NAME common $RECIPE_NAME
+
+helpers/apply_stage $PROVIDER_NAME virtual_machines/common $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME virtual_machines/common_masters $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME virtual_machines/master $RECIPE_NAME
+
+helpers/apply_stage $PROVIDER_NAME loadbalancers/masters/tcp_http $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME loadbalancers/masters/tcp_https $RECIPE_NAME
+
+MASTER_HOSTNAME=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_loadbalancer_masters_public_ip_fqdn)
+MASTER_URL="http://$MASTER_HOSTNAME"
+
+echo "
+
+$MASTER_URL"
