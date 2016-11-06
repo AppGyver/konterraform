@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -e
+
+source recipes/common/params.sh
+
+helpers/apply_stage azure common $RECIPE_NAME
+
+MASTER_URL=$4
+source recipes/common/create_grid_and_append_master_uri_and_token.sh
+
+helpers/apply_stage $PROVIDER_NAME virtual_machines/common $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME virtual_machines/common_nodes $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME virtual_machines/node $RECIPE_NAME
+
+helpers/apply_stage $PROVIDER_NAME loadbalancers/nodes/tcp_http $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME loadbalancers/nodes/tcp_https $RECIPE_NAME
+
+NODE_COUNT=$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_node_count)
+helpers/watch_grid_joining $GRID_NAME $NODE_COUNT
+
+helpers/apply_stage $PROVIDER_NAME workarounds/bug_1136 $RECIPE_NAME

@@ -15,17 +15,20 @@ data "template_file" "coreos_cloudconfig_node" {
     dns_server = "${var.coreos_node_dns_server}"
 
     docker_label_region = "${var.name}-${replace(var.azure_location, " ", "_")}"
-    docker_label_az = "${count.index % var.azure_availability_set_master_platform_fault_domain_count}"
+    docker_label_az = "${count.index % var.azure_availability_set_nodes_platform_fault_domain_count}"
     docker_label_instance_type = "${var.azure_virtual_machine_node_vm_size}"
 
     coreos_locksmith_window_start = "${var.coreos_node_locksmith_window_start}"
     coreos_locksmith_window_length = "${var.coreos_node_locksmith_window_length}"
     coreos_update_reboot_strategy = "${var.coreos_node_update_reboot_strategy}"
 
-    version = "${var.kontena_agent_version}"
-    peer_interface = "${var.kontena_agent_peer_interface}"
-    master_uri = "${var.kontena_agent_master_uri}"
-    token = "${var.kontena_agent_token}"
-    agent_memory_limit = "${var.kontena_agent_memory_limit}"
+    kontena_agent_image = "${var.kontena_agent_image}"
+    kontena_agent_version = "${var.kontena_agent_version}"
+
+    kontena_agent_peer_interface = "${var.kontena_agent_peer_interface}"
+    kontena_agent_master_uri = "${var.kontena_agent_master_uri}"
+    kontena_agent_token = "${var.kontena_agent_token}"
+    kontena_agent_memory_limit = "${var.kontena_agent_memory_limit}"
+
   }
 }
