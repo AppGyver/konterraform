@@ -1,7 +1,16 @@
 [ ! $MASTER_URL ] && echo "MASTER_URL missing" && exit 1
+[ ! $MASTER_NAME ] && echo "MASTER_NAME missing" && exit 1
+[ ! $GRID_INITIAL_SIZE ] && echo "GRID_INITIAL_SIZE missing" && exit 1
+[ ! $GRID_NAME ] && echo "GRID_NAME missing" && exit 1
 
 helpers/master_wait $MASTER_URL
-ruby helpers/kontena_login.rb ${GRID_NAME}_master $MASTER_URL $ADMIN_USERNAME $ADMIN_PASSWORD 10 1
+
+source library/support/abort_if_bug_1262.sh
+
+kontena master login \
+  --code "$(bin/output $PROVIDER_NAME $RECIPE_NAME kontena_master_initial_admin_code)" \
+  --name "$MASTER_NAME" \
+  $MASTER_URL
 
 kontena grid create --initial-size=$GRID_INITIAL_SIZE $GRID_NAME
 

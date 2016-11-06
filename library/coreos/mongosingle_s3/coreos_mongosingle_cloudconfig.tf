@@ -12,22 +12,28 @@ data "template_file" "coreos_cloudconfig_mongosingle" {
     coreos_locksmith_window_length = "${var.coreos_mongosingle_locksmith_window_length}"
     coreos_update_reboot_strategy = "${var.coreos_mongosingle_update_reboot_strategy}"
 
-    mongo_version = "${var.mongo_version}"
-    bind_ip = "${var.mongo_bind_ip}"
+    kontena_mongo_image =  "${var.kontena_mongo_image}"
+    kontena_mongo_version = "${var.kontena_mongo_version}"
+    kontena_mongo_bind_ip = "${var.kontena_mongo_bind_ip}"
 
     name = "${var.name}"
 
-    LOG_ARCHIVER_S3_ACCESS_KEY = "${aws_iam_access_key.kontena_log_archiver.id}"
-    LOG_ARCHIVER_S3_SECRET_KEY = "${aws_iam_access_key.kontena_log_archiver.secret}"
-    LOG_ARCHIVER_S3_REGION = "${aws_s3_bucket.kontena_log_archiver.region}"
-    LOG_ARCHIVER_S3_BUCKET = "${replace(aws_s3_bucket.kontena_log_archiver.arn, "arn:aws:s3:::", "")}"
+    kontena_log_archiver_image = "${var.kontena_log_archiver_image}"
+    kontena_log_archiver_version = "${var.kontena_log_archiver_version}"
 
-    mongo_backup_version = "${var.kontena_mongo_backup_version}"
-    MONGO_BACKUP_INTERVAL = "${var.kontena_mongo_backup_interval}"
-    MONGO_BACKUP_S3_ACCESS_KEY = "${aws_iam_access_key.kontena_mongo_backup.id}"
-    MONGO_BACKUP_S3_SECRET_KEY = "${aws_iam_access_key.kontena_mongo_backup.secret}"
-    MONGO_BACKUP_S3_REGION = "${aws_s3_bucket.kontena_mongo_backup.region}"
-    MONGO_BACKUP_S3_BUCKET = "${replace(aws_s3_bucket.kontena_mongo_backup.arn, "arn:aws:s3:::", "")}"
-    MONGO_BACKUP_S3_PATH = "${var.kontena_mongo_backup_s3_path}"
+    kontena_log_archiver_s3_access_key = "${aws_iam_access_key.kontena_log_archiver.id}"
+    kontena_log_archiver_s3_secret_key = "${aws_iam_access_key.kontena_log_archiver.secret}"
+    kontena_log_archiver_s3_region = "${aws_s3_bucket.kontena_log_archiver.region}"
+    kontena_log_archiver_s3_bucket = "${replace(aws_s3_bucket.kontena_log_archiver.arn, "arn:aws:s3:::", "")}"
+
+    kontena_mongo_backup_image = "${var.kontena_mongo_backup_image}"
+    kontena_mongo_backup_version = "${var.kontena_mongo_backup_version}"
+
+    kontena_mongo_backup_interval = "${var.kontena_mongo_backup_interval}"
+    kontena_mongo_backup_s3_access_key = "${aws_iam_access_key.kontena_mongo_backup.id}"
+    kontena_mongo_backup_s3_secret_key = "${aws_iam_access_key.kontena_mongo_backup.secret}"
+    kontena_mongo_backup_s3_region = "${aws_s3_bucket.kontena_mongo_backup.region}"
+    kontena_mongo_backup_s3_bucket = "${replace(aws_s3_bucket.kontena_mongo_backup.arn, "arn:aws:s3:::", "")}"
+    kontena_mongo_backup_s3_path = "${var.kontena_mongo_backup_s3_path}"
   }
 }

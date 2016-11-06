@@ -1,10 +1,9 @@
-GRID_NAME=$1
-GRID_INITIAL_SIZE=$2
-ADMIN_USERNAME=$3
-ADMIN_PASSWORD=$4
+MASTER_NAME=$1
+GRID_NAME=$2
+GRID_INITIAL_SIZE=$3
 
-if [ ! $GRID_NAME ] || [ ! $GRID_INITIAL_SIZE ] || [ ! $ADMIN_USERNAME ] || [ ! $ADMIN_PASSWORD ]; then
-  echo "params: grid_name grid_initial_size admin_email admin_password"
+if [ ! $MASTER_NAME ] || [ ! $GRID_NAME ] || [ ! $GRID_INITIAL_SIZE ]; then
+  echo "params: master_name grid_name grid_initial_size"
   exit 1
 fi
 

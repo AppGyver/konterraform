@@ -12,7 +12,8 @@ data "template_file" "coreos_cloudconfig_mongosingle" {
     coreos_locksmith_window_length = "${var.coreos_mongosingle_locksmith_window_length}"
     coreos_update_reboot_strategy = "${var.coreos_mongosingle_update_reboot_strategy}"
 
-    mongo_version = "${var.mongo_version}"
-    bind_ip = "${var.mongo_bind_ip}"
+    kontena_mongo_image =  "${var.kontena_mongo_image}"
+    kontena_mongo_version = "${var.kontena_mongo_version}"
+    kontena_mongo_bind_ip = "${var.kontena_mongo_bind_ip}"
   }
 }

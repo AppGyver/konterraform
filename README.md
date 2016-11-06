@@ -81,7 +81,7 @@ aws_instance_node_root_block_device_delete_on_termination = "true"
 
 Step 2: Run the script
 
-`$ recipes/aws/singlemongoalbed/create yourgridname 3 yourkontena@email.com yourpassword`
+`$ recipes/aws/singlemongoalbed/create yourmastername yourgridname 3`
 
 Accept changes by pressing enter or by setting `KONTERRAFORM_FRONTEND=noninteractive` environment variable.
 
@@ -91,7 +91,6 @@ Step 3: Profit!
 $ kontena grid show yourgridname
 yourgridname:
   uri: ws://yourprefix-kontena-master-581130411.eu-west-1.elb.amazonaws.com
-  token: h607SEO7Oj8/SqyKbGV70xVLUcPYhcLmit6VkXxN/oaXeXySim4rSJkBvOcxGgznwPfooUUl44feZQOBRvCY5w==
   stats:
     nodes: 3 of 3
     cpus: 3
@@ -112,12 +111,12 @@ Destroy with `bin/destroy aws singlemongoalbed`
 
 ## Advanced usage
 
-Create a symlink from `mastermongo` recipe (a single VM with master and mongo) to your own name (so that you can have multiple mastermongos running in the future if needed)
+Create a symlink from `master` recipe to your own name.
 
 ```
-$ ln -s mastermongo recipes/aws/mymastermongo
-$ cat > vars/aws-mymaster.tfvars
-$ recipes/aws/mymaster/create
+$ ln -s singlemongoalbed recipes/aws/singlemongoalbed
+$ cat > vars/aws-singlemongoalbed.tfvars
+$ recipes/aws/singlemongoalbed/create
 ```
 
 Then do the same for `nodegrid` AND override the default CIDR block (because each recipe creates it's own VPC, see below)
@@ -125,7 +124,7 @@ Then do the same for `nodegrid` AND override the default CIDR block (because eac
 ```
 $ ln -s nodegrid recipes/aws/mynodegrid
 $ cat > vars/mynodes.tfvars
-$ recipes/aws/mynodes/create yourgridname 3 yourkontena@email.com yourpassword http://<mymasterurl>
+$ recipes/aws/mynodes/create yourmastername yourgridname 3 http://<mymasterurl>
 ```
 
 ### Using different CIDR blocks
@@ -138,19 +137,27 @@ aws_public_subnet_cidr_blocks = ["10.32.1.0/24", "10.32.2.0/24", "10.32.3.0/24"]
 coreos_node_dns_server = "10.32.0.2"
 ```
 
-### Master SSL cert
+## Updating Kontena
 
-Use ALB with HTTPS or add this to vars:
+For automatic updates use the tag `:latest` and reboot the servers when you want to update.
+
+For more controlled releases you should run Kontena images from your own repositories.
+
+The included script:
+```
+helpers/tag_kontena_release 0.16.1 yournamespace yourtag
+```
+will pull `kontena/server:0.16.1` and `kontena/agent:0.16.1` and push them to Dockerhub at `yournamespace/kontena-{server/agent}:yourtag`
+
+
+There is also another script:
 
 ```
-kontena_master_coreos_write_files_ssl_cert = "
-  - path: /etc/kontena-server.pem
-    permissions: 0600
-    owner: root
-    content: |
-      -----BEGIN CERTIFICATE-----
-      ...
+helpers/tag_kontena_support yournamespace yourtag
 ```
+
+that will "snapshot" `mongo:3.0`, `kontena-haproxy`, `kontena/mongo-backup:3.0` and `kontena/log-archiver` at current time from whatever is the `:latest` when the command is run.
+
 
 ## PRO-TIPS
 
@@ -160,6 +167,7 @@ kontena_master_coreos_write_files_ssl_cert = "
 - Set `KONTERRAFORM_FRONTEND=noninteractive` for fully automated setup
 - Taint (force recreate) with `bin/taint aws singlemongoalbed null_resource.kontena_provisioner_node_first.0`
 - See systemd failures with: `systemctl status failed-service`
+- S3 requires that resource names do not use dashes, so you can not use `something_something` as a name (or in your prefix)
 
 ## terraform pls
 

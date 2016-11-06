@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+function fail() {
+  echo $1
+  exit 1
+}
+
+hash terraform
+hash kontena
+
+#TODO: 0.17 should have --cli option that makes this fast
+# if [[ ! "$(kontena version)" =~ "cli: 0.16." ]]; then
+#   echo "Kontena CLI version is not 0.16.x" && exit 1
+# fi

@@ -12,13 +12,17 @@ data "template_file" "coreos_cloudconfig_master" {
     coreos_locksmith_window_length = "${var.coreos_master_locksmith_window_length}"
     coreos_update_reboot_strategy = "${var.coreos_master_update_reboot_strategy}"
 
-    mongodb_uri = "mongodb://${var.kontena_master_mongodb_host}:27017/${var.name}_master"
-    version = "${var.kontena_master_version}"
-    vault_iv = "${var.kontena_master_vault_iv}"
-    vault_key = "${var.kontena_master_vault_key}"
-    max_threads = "${var.kontena_master_max_threads}"
-    web_concurrency = "${var.kontena_master_web_concurrency}"
+    kontena_master_image = "${var.kontena_master_image}"
+    kontena_master_version = "${var.kontena_master_version}"
 
-    write_files_ssl_cert = "${var.kontena_master_coreos_write_files_ssl_cert}"
+    kontena_master_mongodb_uri = "mongodb://${var.kontena_master_mongodb_host}:27017/${var.name}_master"
+    kontena_master_vault_iv = "${var.kontena_master_vault_iv}"
+    kontena_master_vault_key = "${var.kontena_master_vault_key}"
+    kontena_master_max_threads = "${var.kontena_master_max_threads}"
+    kontena_master_web_concurrency = "${var.kontena_master_web_concurrency}"
+    kontena_master_initial_admin_code = "${var.kontena_master_initial_admin_code}"
+
+    kontena_haproxy_image = "${var.kontena_haproxy_image}"
+    kontena_haproxy_version = "${var.kontena_haproxy_version}"
   }
 }
