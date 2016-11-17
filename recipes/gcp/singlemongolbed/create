@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+source recipes/common/params.sh
+
+helpers/apply_stage $PROVIDER_NAME common $RECIPE_NAME
+helpers/apply_stage $PROVIDER_NAME instances/mongo $RECIPE_NAME
