@@ -13,7 +13,7 @@ Supported environments:
 
 WIP environments:
 
-* Google Cloud Platform
+* [GCP](README.gcp.md)
 * Packet
 * Softlayer
 
